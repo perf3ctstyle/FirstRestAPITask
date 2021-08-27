@@ -81,8 +81,4 @@ public class TagService {
     public void deleteById(long id) {
         tagDao.deleteById(id);
     }
-
-    public void showMetadata() {
-        tagDao.showMetadata();
-    }
 }

@@ -64,13 +64,4 @@ public class TagDao {
     public void deleteById(long id) {
         jdbcTemplate.update(DELETE, id);
     }
-
-    public void showMetadata() {
-        System.out.println("Check");
-        jdbcTemplate.query("SELECT * FROM TAG", (resultSet) -> {
-            System.out.println(resultSet.getMetaData().getColumnName(0));
-            System.out.println(resultSet.getMetaData().getColumnTypeName(0));
-            System.out.println(resultSet.toString());
-        });
-    }
 }
