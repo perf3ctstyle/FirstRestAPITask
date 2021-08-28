@@ -46,12 +46,12 @@ public class GiftCertificateDao {
     }
 
     public List<GiftCertificate> getByPartOfField(String fieldName, String part) {
-        String query = SqlUtils.getByPartOfField(GET_ALL, fieldName, FIELDS, part);
+        String query = SqlUtils.constructQueryForGettingByPartOfField(GET_ALL, fieldName, FIELDS, part);
         return jdbcTemplate.query(query, new GiftCertificateRowMapper());
     }
 
     public List<GiftCertificate> sortByFieldInGivenOrder(String fieldName, boolean isAsc) {
-        String query = SqlUtils.sortInOrder(GET_ALL, fieldName, FIELDS, isAsc);
+        String query = SqlUtils.constructQueryForSortingInOrder(GET_ALL, fieldName, FIELDS, isAsc);
         return jdbcTemplate.query(query, new GiftCertificateRowMapper());
     }
 

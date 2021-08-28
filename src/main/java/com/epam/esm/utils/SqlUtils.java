@@ -13,7 +13,7 @@ public class SqlUtils {
 
     private static final String FIELD_NOT_FOUND = " field wasn't found.";
 
-    public static String sortInOrder(String query, String fieldName, List<String> fields, boolean isAsc) {
+    public static String constructQueryForSortingInOrder(String query, String fieldName, List<String> fields, boolean isAsc) {
         if (!fields.contains(fieldName)) {
             throw new IllegalArgumentException(fieldName + FIELD_NOT_FOUND);
         }
@@ -31,7 +31,7 @@ public class SqlUtils {
         return stringBuilder.toString();
     }
 
-    public static String getByPartOfField(String query, String fieldName, List<String> fields, String part) {
+    public static String constructQueryForGettingByPartOfField(String query, String fieldName, List<String> fields, String part) {
         if (!fields.contains(fieldName)) {
             throw new IllegalArgumentException(fieldName + FIELD_NOT_FOUND);
         }

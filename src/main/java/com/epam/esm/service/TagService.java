@@ -1,10 +1,10 @@
 package com.epam.esm.service;
 
 import com.epam.esm.dao.TagDao;
-import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exception.EntityAlreadyExistsException;
+import com.epam.esm.exception.ResourceAlreadyExistsException;
 import com.epam.esm.exception.RequiredFieldsMissingException;
+import com.epam.esm.exception.ResourceNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,8 @@ public class TagService {
 
     private final TagDao tagDao;
 
+    private static final String RESOURCE_NOT_FOUND = "The required resource wasn't found.";
+    private static final String VALUE_FOR_SEARCH = " Value used for searching = ";
     private static final String REQUIRED_FIELD_MISSING = "Unfortunately, some required fields were missing.";
     private static final String TAG_WITH_NAME_ALREADY_EXISTS = "Unfortunately, a tag with this name already exists.";
 
@@ -22,27 +24,40 @@ public class TagService {
     }
 
     public List<Tag> getAll() {
-        return tagDao.getAll();
+        List<Tag> tags = tagDao.getAll();
+        if (tags.isEmpty()) {
+            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
+        }
+
+        return tags;
     }
 
     public Tag getById(long id) {
         Optional<Tag> optionalTag = tagDao.getById(id);
-        return optionalTag.orElse(null);
+        if (optionalTag.isEmpty()) {
+            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND + VALUE_FOR_SEARCH + id);
+        }
+
+        return optionalTag.get();
     }
 
     public Tag getByName(String name) {
         Optional<Tag> optionalTag = tagDao.getByName(name);
-        return optionalTag.orElse(null);
+        if (optionalTag.isEmpty()) {
+            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND + VALUE_FOR_SEARCH + name);
+        }
+
+        return optionalTag.get();
     }
 
-    public void create(Tag tag) throws RequiredFieldsMissingException, EntityAlreadyExistsException {
+    public void create(Tag tag) throws RequiredFieldsMissingException, ResourceAlreadyExistsException {
         if (tag.getName() == null) {
             throw new RequiredFieldsMissingException(REQUIRED_FIELD_MISSING);
         }
 
         Tag tagInDatabase = getByName(tag.getName());
         if (tagInDatabase != null) {
-            throw new EntityAlreadyExistsException(TAG_WITH_NAME_ALREADY_EXISTS);
+            throw new ResourceAlreadyExistsException(TAG_WITH_NAME_ALREADY_EXISTS);
         }
 
         tagDao.create(tag);
@@ -70,15 +85,18 @@ public class TagService {
 
         for (Long tagId : tagIds) {
             Tag tag = getById(tagId);
-            if (tag != null) {
-                tags.add(tag);
-            }
+            tags.add(tag);
         }
 
         return tags;
     }
 
     public void deleteById(long id) {
+        Optional<Tag> optionalTag = tagDao.getById(id);
+        if (optionalTag.isEmpty()) {
+            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND + VALUE_FOR_SEARCH + id);
+        }
+
         tagDao.deleteById(id);
     }
 }

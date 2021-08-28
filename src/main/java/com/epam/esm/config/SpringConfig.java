@@ -7,12 +7,16 @@ import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validator.GiftCertificateValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -35,10 +39,14 @@ public class SpringConfig implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
 
-    private static final String DRIVER_CLASS_NAME = "com.mysql.cj.jdbc.Driver";
-    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/gift_certificates";
-    private static final String DATABASE_USERNAME = "root";
-    private static final String DATABASE_PASSWORD = "rootpass";
+    @Value("${database.driver}")
+    private String databaseDriver;
+    @Value("${database.url}")
+    private String databaseUrl;
+    @Value("${database.username}")
+    private String databaseUsername;
+    @Value("${database.password}")
+    private String databasePassword;
 
     private static final String MESSAGE_SOURCE = "messageSource";
     private static final String MESSAGES_BASENAME = "languages/language";
@@ -52,13 +60,20 @@ public class SpringConfig implements WebMvcConfigurer {
     }
 
     @Bean
+    public static PropertySourcesPlaceholderConfigurer properties() {
+        PropertySourcesPlaceholderConfigurer props = new PropertySourcesPlaceholderConfigurer();
+        props.setLocations(new ClassPathResource("/database/database.properties"));
+        return props;
+    }
+
+    @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
-        dataSource.setDriverClassName(DRIVER_CLASS_NAME);
-        dataSource.setUrl(DATABASE_URL);
-        dataSource.setUsername(DATABASE_USERNAME);
-        dataSource.setPassword(DATABASE_PASSWORD);
+        dataSource.setDriverClassName(databaseDriver);
+        dataSource.setUrl(databaseUrl);
+        dataSource.setUsername(databaseUsername);
+        dataSource.setPassword(databasePassword);
 
         return dataSource;
     }
