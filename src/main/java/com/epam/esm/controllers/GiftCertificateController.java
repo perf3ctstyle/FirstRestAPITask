@@ -75,7 +75,7 @@ public class GiftCertificateController {
     }
 
     @GetMapping(params = { FIELD_NAME, PART_OF_FIELD }, produces = JSON)
-    public ResponseEntity<?> getByPartOfField(@RequestParam String fieldName, @RequestParam String partOfField, Locale locale) {
+    public ResponseEntity<?> getByPartOfField(@RequestParam String fieldName, @RequestParam String partOfField) {
         List<GiftCertificate> giftCertificates = giftCertificateService.getByPartOfField(fieldName, partOfField);
 
         return new ResponseEntity<>(giftCertificates, HttpStatus.OK);

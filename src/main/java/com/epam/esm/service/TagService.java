@@ -50,13 +50,13 @@ public class TagService {
         return optionalTag.get();
     }
 
-    public void create(Tag tag) throws RequiredFieldsMissingException, ResourceAlreadyExistsException {
+    public void create(Tag tag) {
         if (tag.getName() == null) {
             throw new RequiredFieldsMissingException(REQUIRED_FIELD_MISSING);
         }
 
-        Tag tagInDatabase = getByName(tag.getName());
-        if (tagInDatabase != null) {
+        Optional<Tag> optionalTag = tagDao.getByName(tag.getName());
+        if (optionalTag.isPresent()) {
             throw new ResourceAlreadyExistsException(TAG_WITH_NAME_ALREADY_EXISTS);
         }
 
@@ -84,8 +84,8 @@ public class TagService {
         List<Tag> tags = new ArrayList<>();
 
         for (Long tagId : tagIds) {
-            Tag tag = getById(tagId);
-            tags.add(tag);
+            Optional<Tag> optionalTag = tagDao.getById(tagId);
+            optionalTag.ifPresent(tags::add);
         }
 
         return tags;

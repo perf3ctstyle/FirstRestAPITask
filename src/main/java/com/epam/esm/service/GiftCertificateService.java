@@ -168,6 +168,10 @@ public class GiftCertificateService {
 
     public List<GiftCertificate> getByPartOfField(String fieldName, String partOfField) {
         List<GiftCertificate> giftCertificates = giftCertificateDao.getByPartOfField(fieldName, partOfField);
+        if (giftCertificates.isEmpty()) {
+            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND + VALUE_FOR_SEARCH + partOfField);
+        }
+
         setGiftCertificateTags(giftCertificates);
 
         return giftCertificates;
@@ -184,8 +188,12 @@ public class GiftCertificateService {
 
         List<GiftCertificate> giftCertificates = new ArrayList<>();
         for (Long certificateId : certificateIds) {
-            GiftCertificate giftCertificate = getById(certificateId);
-            giftCertificates.add(giftCertificate);
+            Optional<GiftCertificate> optionalGiftCertificate = giftCertificateDao.getById(certificateId);
+            optionalGiftCertificate.ifPresent(giftCertificates::add);
+        }
+
+        if (giftCertificates.isEmpty()) {
+            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
 
         return giftCertificates;
