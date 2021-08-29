@@ -1,6 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dao.GiftAndTagDao;
+import com.epam.esm.dao.GiftsAndTagsDao;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
@@ -22,18 +22,15 @@ public class GiftCertificateServiceTest {
 
     private final GiftCertificateDao giftCertificateDao = Mockito.mock(GiftCertificateDao.class);
     private final TagService tagService = Mockito.mock(TagService.class);
-    private final GiftAndTagDao giftAndTagDao = Mockito.mock(GiftAndTagDao.class);
+    private final GiftsAndTagsDao giftsAndTagsDao = Mockito.mock(GiftsAndTagsDao.class);
     private final GiftCertificateValidator giftCertificateValidator = Mockito.mock(GiftCertificateValidator.class);
-    private final GiftCertificateService giftCertificateService = new GiftCertificateService(giftCertificateDao, tagService, giftAndTagDao, giftCertificateValidator);
-
-    private static final String NAME = "name";
-    private static final String DESCRIPTION = "description";
+    private final GiftCertificateService giftCertificateService = new GiftCertificateService(giftCertificateDao, tagService, giftsAndTagsDao, giftCertificateValidator);
 
     @Test
     public void testShouldReturnListOfGiftCertificatesInGetAll() {
         List<GiftCertificate> expected = Arrays.asList(new GiftCertificate(), new GiftCertificate());
         Mockito.when(giftCertificateDao.getAll()).thenReturn(expected);
-        Mockito.when(giftAndTagDao.getTagIdsByCertificateId(null)).thenReturn(null);
+        Mockito.when(giftsAndTagsDao.getTagIdsByCertificateId(null)).thenReturn(null);
         Mockito.when(tagService.getTagsByListOfIds(null)).thenReturn(null);
 
         List<GiftCertificate> actual = giftCertificateService.getAll();
@@ -56,7 +53,7 @@ public class GiftCertificateServiceTest {
         long id = 0;
         GiftCertificate expected = new GiftCertificate();
         Mockito.when(giftCertificateDao.getById(id)).thenReturn(Optional.of(expected));
-        Mockito.when(giftAndTagDao.getTagIdsByCertificateId(null)).thenReturn(null);
+        Mockito.when(giftsAndTagsDao.getTagIdsByCertificateId(null)).thenReturn(null);
         Mockito.when(tagService.getTagsByListOfIds(null)).thenReturn(null);
 
         GiftCertificate actual = giftCertificateService.getById(id);
@@ -101,8 +98,8 @@ public class GiftCertificateServiceTest {
     public void testShouldThrowExceptionWhenPriceIsLowerThanZeroInCreate() {
         assertThrows(IllegalArgumentException.class, () -> {
             GiftCertificate giftCertificate = new GiftCertificate();
-            giftCertificate.setName(NAME);
-            giftCertificate.setDescription(DESCRIPTION);
+            giftCertificate.setName("name");
+            giftCertificate.setDescription("description");
             giftCertificate.setPrice(-50);
             giftCertificate.setDuration(10L);
             Mockito.when(giftCertificateValidator.areAllFieldsFilledForCreation(giftCertificate)).thenReturn(true);
@@ -115,8 +112,8 @@ public class GiftCertificateServiceTest {
     public void testShouldThrowExceptionWhenDurationIsLowerThanZeroInCreate() {
         assertThrows(IllegalArgumentException.class, () -> {
             GiftCertificate giftCertificate = new GiftCertificate();
-            giftCertificate.setName(NAME);
-            giftCertificate.setDescription(DESCRIPTION);
+            giftCertificate.setName("name");
+            giftCertificate.setDescription("description");
             giftCertificate.setPrice(50);
             giftCertificate.setDuration(-10L);
             Mockito.when(giftCertificateValidator.areAllFieldsFilledForCreation(giftCertificate)).thenReturn(true);
@@ -148,7 +145,7 @@ public class GiftCertificateServiceTest {
     public void testShouldReturnListOfGiftCertificatesInGetByPartOfField() {
         List<GiftCertificate> expected = Arrays.asList(new GiftCertificate(), new GiftCertificate());
         Mockito.when(giftCertificateDao.getByPartOfField(null, null)).thenReturn(expected);
-        Mockito.when(giftAndTagDao.getTagIdsByCertificateId(null)).thenReturn(null);
+        Mockito.when(giftsAndTagsDao.getTagIdsByCertificateId(null)).thenReturn(null);
         Mockito.when(tagService.getTagsByListOfIds(null)).thenReturn(null);
 
         List<GiftCertificate> actual = giftCertificateService.getByPartOfField(null, null);
@@ -172,7 +169,7 @@ public class GiftCertificateServiceTest {
         Mockito.when(tagService.getByName(null)).thenReturn(tag);
         Long certificateId = 1L;
         List<Long> certificateIds = List.of(certificateId);
-        Mockito.when(giftAndTagDao.getCertificateIdsByTagId(null)).thenReturn(certificateIds);
+        Mockito.when(giftsAndTagsDao.getCertificateIdsByTagId(null)).thenReturn(certificateIds);
         GiftCertificate giftCertificate = new GiftCertificate();
         List<GiftCertificate> expected = List.of(giftCertificate);
         Mockito.when(giftCertificateDao.getById(certificateId)).thenReturn(Optional.of(giftCertificate));
@@ -197,7 +194,7 @@ public class GiftCertificateServiceTest {
             Tag tag = new Tag();
             Mockito.when(tagService.getByName(null)).thenReturn(tag);
             List<Long> certificateIds = new ArrayList<>();
-            Mockito.when(giftAndTagDao.getCertificateIdsByTagId(null)).thenReturn(certificateIds);
+            Mockito.when(giftsAndTagsDao.getCertificateIdsByTagId(null)).thenReturn(certificateIds);
 
             giftCertificateService.getByTagName(null);
         });
@@ -207,7 +204,7 @@ public class GiftCertificateServiceTest {
     public void testShouldReturnListOfGiftCertificatesInSortByFieldInGivenOrder() {
         List<GiftCertificate> expected = Arrays.asList(new GiftCertificate(), new GiftCertificate());
         Mockito.when(giftCertificateDao.sortByFieldInGivenOrder(null, false)).thenReturn(expected);
-        Mockito.when(giftAndTagDao.getTagIdsByCertificateId(null)).thenReturn(null);
+        Mockito.when(giftsAndTagsDao.getTagIdsByCertificateId(null)).thenReturn(null);
         Mockito.when(tagService.getTagsByListOfIds(null)).thenReturn(null);
 
         List<GiftCertificate> actual = giftCertificateService.sortByFieldInGivenOrder(null, false);

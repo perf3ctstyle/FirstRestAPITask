@@ -40,28 +40,24 @@ public class TagController {
     @GetMapping(produces = JSON)
     public ResponseEntity<?> getAll() {
         List<Tag> tagList = tagService.getAll();
-
         return new ResponseEntity<>(tagList, HttpStatus.OK);
     }
 
     @GetMapping(value = ID_PATH, produces = JSON)
     public ResponseEntity<?> getById(@PathVariable(ID) long id) {
         Tag tag = tagService.getById(id);
-
         return new ResponseEntity<>(tag, HttpStatus.OK);
     }
 
     @PostMapping(produces = JSON)
     public ResponseEntity<?> create(@RequestBody Tag tag) {
         tagService.create(tag);
-
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/{id}", produces = JSON)
     public ResponseEntity<?> deleteById(@PathVariable(ID) long id) {
         tagService.deleteById(id);
-
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

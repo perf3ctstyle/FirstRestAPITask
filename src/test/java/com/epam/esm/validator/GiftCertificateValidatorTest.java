@@ -28,10 +28,47 @@ public class GiftCertificateValidatorTest {
     }
 
     @Test
-    public void testShouldReturnFalseWhenNotEveryFieldFilledForCreation() {
+    public void testShouldReturnFalseWhenNameFieldNotFilledForCreation() {
+        GiftCertificate giftCertificate = new GiftCertificate();
+        giftCertificate.setDescription(DESCRIPTION);
+        giftCertificate.setPrice(PRICE);
+        giftCertificate.setDuration(DURATION);
+
+        boolean result = validator.areAllFieldsFilledForCreation(giftCertificate);
+
+        Assertions.assertFalse(result);
+    }
+
+    @Test
+    public void testShouldReturnFalseWhenDescriptionFieldNotFilledForCreation() {
+        GiftCertificate giftCertificate = new GiftCertificate();
+        giftCertificate.setName(NAME);
+        giftCertificate.setPrice(PRICE);
+        giftCertificate.setDuration(DURATION);
+
+        boolean result = validator.areAllFieldsFilledForCreation(giftCertificate);
+
+        Assertions.assertFalse(result);
+    }
+
+    @Test
+    public void testShouldReturnFalseWhenPriceFieldNotFilledForCreation() {
         GiftCertificate giftCertificate = new GiftCertificate();
         giftCertificate.setName(NAME);
         giftCertificate.setDescription(DESCRIPTION);
+        giftCertificate.setDuration(DURATION);
+
+        boolean result = validator.areAllFieldsFilledForCreation(giftCertificate);
+
+        Assertions.assertFalse(result);
+    }
+
+    @Test
+    public void testShouldReturnFalseWhenDurationFieldNotFilledForCreation() {
+        GiftCertificate giftCertificate = new GiftCertificate();
+        giftCertificate.setName(NAME);
+        giftCertificate.setDescription(DESCRIPTION);
+        giftCertificate.setPrice(PRICE);
 
         boolean result = validator.areAllFieldsFilledForCreation(giftCertificate);
 

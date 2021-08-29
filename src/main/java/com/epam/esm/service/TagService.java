@@ -15,7 +15,6 @@ public class TagService {
     private final TagDao tagDao;
 
     private static final String RESOURCE_NOT_FOUND = "The required resource wasn't found.";
-    private static final String VALUE_FOR_SEARCH = " Value used for searching = ";
     private static final String REQUIRED_FIELD_MISSING = "Unfortunately, some required fields were missing.";
     private static final String TAG_WITH_NAME_ALREADY_EXISTS = "Unfortunately, a tag with this name already exists.";
 
@@ -35,7 +34,7 @@ public class TagService {
     public Tag getById(long id) {
         Optional<Tag> optionalTag = tagDao.getById(id);
         if (optionalTag.isEmpty()) {
-            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND + VALUE_FOR_SEARCH + id);
+            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
 
         return optionalTag.get();
@@ -44,7 +43,7 @@ public class TagService {
     public Tag getByName(String name) {
         Optional<Tag> optionalTag = tagDao.getByName(name);
         if (optionalTag.isEmpty()) {
-            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND + VALUE_FOR_SEARCH + name);
+            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
 
         return optionalTag.get();
@@ -94,7 +93,7 @@ public class TagService {
     public void deleteById(long id) {
         Optional<Tag> optionalTag = tagDao.getById(id);
         if (optionalTag.isEmpty()) {
-            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND + VALUE_FOR_SEARCH + id);
+            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
 
         tagDao.deleteById(id);

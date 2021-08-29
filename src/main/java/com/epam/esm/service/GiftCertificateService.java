@@ -1,6 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dao.GiftAndTagDao;
+import com.epam.esm.dao.GiftsAndTagsDao;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.utils.DateTimeUtils;
@@ -20,19 +20,18 @@ public class GiftCertificateService {
 
     private final GiftCertificateDao giftCertificateDao;
     private final TagService tagService;
-    private final GiftAndTagDao giftAndTagDao;
+    private final GiftsAndTagsDao giftsAndTagsDao;
     private final GiftCertificateValidator giftCertificateValidator;
 
-    private static final String VALUE_FOR_SEARCH = " Value used for searching = ";
     private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
     private static final String RESOURCE_NOT_FOUND = "The required resource wasn't found.";
     private static final String REQUIRED_FIELDS_MISSING = "Some of the required fields were missing.";
     private static final String NEGATIVE_VALUE_PROHIBITED = "Negative value was found in a field that is supposed to be positive.";
 
-    public GiftCertificateService(GiftCertificateDao giftCertificateDao, TagService tagService, GiftAndTagDao giftAndTagDao, GiftCertificateValidator giftCertificateValidator) {
+    public GiftCertificateService(GiftCertificateDao giftCertificateDao, TagService tagService, GiftsAndTagsDao giftsAndTagsDao, GiftCertificateValidator giftCertificateValidator) {
         this.giftCertificateDao = giftCertificateDao;
         this.tagService = tagService;
-        this.giftAndTagDao = giftAndTagDao;
+        this.giftsAndTagsDao = giftsAndTagsDao;
         this.giftCertificateValidator = giftCertificateValidator;
     }
 
@@ -48,7 +47,7 @@ public class GiftCertificateService {
     }
 
     private void setGiftCertificateTags(GiftCertificate giftCertificate) {
-        List<Long> tagIds = giftAndTagDao.getTagIdsByCertificateId(giftCertificate.getId());
+        List<Long> tagIds = giftsAndTagsDao.getTagIdsByCertificateId(giftCertificate.getId());
         List<Tag> tags = tagService.getTagsByListOfIds(tagIds);
         giftCertificate.setTags(tags);
     }
@@ -62,7 +61,7 @@ public class GiftCertificateService {
     public GiftCertificate getById(long id) {
         Optional<GiftCertificate> optionalGiftCertificate = giftCertificateDao.getById(id);
         if (optionalGiftCertificate.isEmpty()) {
-            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND + VALUE_FOR_SEARCH + id);
+            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
 
         GiftCertificate giftCertificate = optionalGiftCertificate.get();
@@ -91,7 +90,7 @@ public class GiftCertificateService {
         Long createdCertificateId = giftCertificateDao.create(giftCertificate);
 
         for (Long tagId : createdTagsIds) {
-            giftAndTagDao.create(createdCertificateId, tagId);
+            giftsAndTagsDao.create(createdCertificateId, tagId);
         }
     }
 
@@ -99,7 +98,7 @@ public class GiftCertificateService {
     public void updateById(long id, GiftCertificate newGiftCertificate) {
         GiftCertificate oldGiftCertificate = getById(id);
         if (oldGiftCertificate == null) {
-            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND + VALUE_FOR_SEARCH + id);
+            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
 
         List<Tag> tags = newGiftCertificate.getTags();
@@ -121,7 +120,7 @@ public class GiftCertificateService {
         giftCertificateDao.update(giftCertificateToSave);
 
         for (Long tagId : createdTagsIds) {
-            giftAndTagDao.create(id, tagId);
+            giftsAndTagsDao.create(id, tagId);
         }
     }
 
@@ -160,7 +159,7 @@ public class GiftCertificateService {
     public void deleteById(long id) {
         Optional<GiftCertificate> optionalGiftCertificate = giftCertificateDao.getById(id);
         if (optionalGiftCertificate.isEmpty()) {
-            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND + VALUE_FOR_SEARCH + id);
+            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
 
         giftCertificateDao.deleteById(id);
@@ -169,7 +168,7 @@ public class GiftCertificateService {
     public List<GiftCertificate> getByPartOfField(String fieldName, String partOfField) {
         List<GiftCertificate> giftCertificates = giftCertificateDao.getByPartOfField(fieldName, partOfField);
         if (giftCertificates.isEmpty()) {
-            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND + VALUE_FOR_SEARCH + partOfField);
+            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
 
         setGiftCertificateTags(giftCertificates);
@@ -180,11 +179,11 @@ public class GiftCertificateService {
     public List<GiftCertificate> getByTagName(String tagName) {
         Tag tag = tagService.getByName(tagName);
         if (tag == null) {
-            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND + VALUE_FOR_SEARCH + tagName);
+            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
 
         Long tagId = tag.getId();
-        List<Long> certificateIds = giftAndTagDao.getCertificateIdsByTagId(tagId);
+        List<Long> certificateIds = giftsAndTagsDao.getCertificateIdsByTagId(tagId);
 
         List<GiftCertificate> giftCertificates = new ArrayList<>();
         for (Long certificateId : certificateIds) {

@@ -42,56 +42,48 @@ public class GiftCertificateController {
     @GetMapping(produces = JSON)
     public ResponseEntity<?> getAll() {
         List<GiftCertificate> giftCertificates = giftCertificateService.getAll();
-
         return new ResponseEntity<>(giftCertificates, HttpStatus.OK);
     }
 
     @GetMapping(value = ID_PATH, produces = JSON)
     public ResponseEntity<?> getById(@PathVariable(ID) long id) {
         GiftCertificate giftCertificate = giftCertificateService.getById(id);
-
         return new ResponseEntity<>(giftCertificate, HttpStatus.OK);
     }
 
     @PostMapping(produces = JSON)
     public ResponseEntity<?> create(@RequestBody GiftCertificate giftCertificate) {
         giftCertificateService.create(giftCertificate);
-
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PatchMapping(value = ID_PATH, produces = JSON)
     public ResponseEntity<?> updateById(@PathVariable long id, @RequestBody GiftCertificate newGiftCertificate) {
         giftCertificateService.updateById(id, newGiftCertificate);
-
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping(value = ID_PATH, produces = JSON)
     public ResponseEntity<?> deleteById(@PathVariable long id) {
         giftCertificateService.deleteById(id);
-
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping(params = { FIELD_NAME, PART_OF_FIELD }, produces = JSON)
     public ResponseEntity<?> getByPartOfField(@RequestParam String fieldName, @RequestParam String partOfField) {
         List<GiftCertificate> giftCertificates = giftCertificateService.getByPartOfField(fieldName, partOfField);
-
         return new ResponseEntity<>(giftCertificates, HttpStatus.OK);
     }
 
     @GetMapping(params = TAG_NAME, produces = JSON)
     public ResponseEntity<?> getByTagName(@RequestParam String tagName) {
         List<GiftCertificate> giftCertificates = giftCertificateService.getByTagName(tagName);
-
         return new ResponseEntity<>(giftCertificates, HttpStatus.OK);
     }
 
-    @GetMapping(params = {FIELD_NAME, IS_ASC}, produces = JSON)
+    @GetMapping(params = { FIELD_NAME, IS_ASC }, produces = JSON)
     public ResponseEntity<?> sortByFieldInGivenOrder(@RequestParam String fieldName, @RequestParam boolean isAsc) {
         List<GiftCertificate> giftCertificates = giftCertificateService.sortByFieldInGivenOrder(fieldName, isAsc);
-
         return new ResponseEntity<>(giftCertificates, HttpStatus.OK);
 
     }

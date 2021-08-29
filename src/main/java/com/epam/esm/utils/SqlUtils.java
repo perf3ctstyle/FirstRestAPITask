@@ -10,11 +10,20 @@ public class SqlUtils {
     private static final String ASCENDING = " ASC";
     private static final String DESCENDING = " DESC";
     private static final String WILDCARD_ANY = "%";
+    private static final String SINGLE_QUOTE = "'";
 
     private static final String FIELD_NOT_FOUND = " field wasn't found.";
 
     public static String constructQueryForSortingInOrder(String query, String fieldName, List<String> fields, boolean isAsc) {
-        if (!fields.contains(fieldName)) {
+        boolean doesFieldExist = false;
+        for (String field : fields) {
+            if (field.equalsIgnoreCase(fieldName)) {
+                doesFieldExist = true;
+                break;
+            }
+        }
+
+        if (!doesFieldExist) {
             throw new IllegalArgumentException(fieldName + FIELD_NOT_FOUND);
         }
 
@@ -32,9 +41,18 @@ public class SqlUtils {
     }
 
     public static String constructQueryForGettingByPartOfField(String query, String fieldName, List<String> fields, String part) {
-        if (!fields.contains(fieldName)) {
+        boolean doesFieldExist = false;
+        for (String field : fields) {
+            if (field.equalsIgnoreCase(fieldName)) {
+                doesFieldExist = true;
+                break;
+            }
+        }
+
+        if (!doesFieldExist) {
             throw new IllegalArgumentException(fieldName + FIELD_NOT_FOUND);
         }
-        return query + WHERE + fieldName + LIKE + WILDCARD_ANY + part + WILDCARD_ANY;
+
+        return query + WHERE + fieldName + LIKE + SINGLE_QUOTE + WILDCARD_ANY + part + WILDCARD_ANY + SINGLE_QUOTE;
     }
 }
