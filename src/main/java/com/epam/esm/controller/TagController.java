@@ -1,14 +1,14 @@
-package com.epam.esm.controllers;
+package com.epam.esm.controller;
 
 import com.epam.esm.entity.ErrorInfo;
-import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.DaoException;
 import com.epam.esm.exception.ResourceAlreadyExistsException;
 import com.epam.esm.exception.RequiredFieldsMissingException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.TagService;
+import com.epam.esm.util.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +17,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * This is a class that represents an API and provides basic operations for manipulations with Tag entities.
+ *
+ * @author Nikita Torop
+ */
 @RestController
 @RequestMapping("/tag")
 public class TagController {
@@ -31,6 +36,7 @@ public class TagController {
     private static final String RESOURCE_NOT_FOUND = "resource.not.found";
     private static final String RESOURCE_ALREADY_EXISTS = "resource.exists";
     private static final String REQUIRED_FIELDS_MISSING = "field.missing";
+    private static final String INTERNAL_ERROR = "error.internal";
 
     @Autowired
     public TagController(TagService tagService, MessageSource messageSource) {
@@ -39,10 +45,8 @@ public class TagController {
     }
 
     /**
-     * Returns a {@link ResponseEntity} object with a {@link HttpStatus} and a {@link List} object containing {@link Tag} objects
-     * that are retrieved from a database or an {@link ErrorInfo} object if nothing was retrieved.
+     * Returns all {@link Tag} objects from a database or throws {@link ResourceNotFoundException} if nothing is found.
      * @return {@link ResponseEntity} with a {@link HttpStatus} and a {@link List} of {@link Tag} objects or a {@link ErrorInfo} object.
-     * @throws {@link ResourceNotFoundException} if nothing is retrieved from a database.
      */
     @GetMapping(produces = JSON)
     public ResponseEntity<?> getAll() {
@@ -51,11 +55,10 @@ public class TagController {
     }
 
     /**
-     * Returns a {@link ResponseEntity} object with a {@link HttpStatus} and a {@link Tag} object
-     * that is retrieved from a database by its id or an {@link ErrorInfo} object if nothing was retrieved.
+     * Returns a {@link Tag} object from a database by its id or throws {@link ResourceNotFoundException} if nothing is retrieved from a database
+     * or {@link DaoException} in the case of unexpected behaviour on a Dao level.
      * @param id - the {@link Tag} object's id that is to be retrieved from a database.
      * @return {@link ResponseEntity} with a {@link HttpStatus} and a {@link Tag} object or a {@link ErrorInfo} object.
-     * @throws {@link ResourceNotFoundException} if nothing is retrieved from a database
      */
     @GetMapping(value = ID_PATH, produces = JSON)
     public ResponseEntity<?> getById(@PathVariable(ID) long id) {
@@ -64,12 +67,10 @@ public class TagController {
     }
 
     /**
-     * Creates a {@link Tag} object in a database and returns with a {@link ResponseEntity} object containing {@link HttpStatus}
-     * that represents the result of execution and a {@link ErrorInfo} object if the object wasn't created in a database.
+     * Creates a {@link Tag} object in a database or throws {@link RequiredFieldsMissingException} if some fields
+     * required for creation are missing or {@link ResourceAlreadyExistsException} if the tag with the same name already exists.
      * @param tag - the {@link Tag} object that is to be created in a database.
      * @return {@link ResponseEntity} with a {@link HttpStatus} alone or additionally with a {@link ErrorInfo} object.
-     * @throws {@link RequiredFieldsMissingException} if the parameter object lacks any values required for its creation in a database.
-     * @throws {@link ResourceAlreadyExistsException} if a tag with the same name already exists in a database.
      */
     @PostMapping(produces = JSON)
     public ResponseEntity<?> create(@RequestBody Tag tag) {
@@ -78,11 +79,10 @@ public class TagController {
     }
 
     /**
-     * Deletes a {@link Tag} object in a database and returns with a {@link ResponseEntity} object containing {@link HttpStatus}
-     * that represents the result of execution and a {@link ErrorInfo} object if the object wasn't deleted in a database.
+     * Deletes a {@link Tag} object in a database by its id or throws {@link ResourceNotFoundException} if the object
+     * with such id doesn't exist.
      * @param id - the {@link Tag} object's id that is to be deleted in a database.
      * @return {@link ResponseEntity} with a {@link HttpStatus} alone or additionally with a {@link ErrorInfo} object.
-     * @throws {@link ResourceNotFoundException} if the object with such an id doesn't exist in a database.
      */
     @DeleteMapping(value = "/{id}", produces = JSON)
     public ResponseEntity<?> deleteById(@PathVariable(ID) long id) {
@@ -92,19 +92,29 @@ public class TagController {
 
     @ExceptionHandler(RequiredFieldsMissingException.class)
     public ResponseEntity<ErrorInfo> handleRequiredFieldsMissingException(Locale locale) {
-        ErrorInfo errorInfo = new ErrorInfo(messageSource.getMessage(REQUIRED_FIELDS_MISSING, null, locale), 40002);
-        return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
+        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(messageSource.getMessage(REQUIRED_FIELDS_MISSING, null, locale),
+                40002,
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ResourceAlreadyExistsException.class)
     public ResponseEntity<ErrorInfo> handleResourceAlreadyExistsException(Locale locale) {
-        ErrorInfo errorInfo = new ErrorInfo(messageSource.getMessage(RESOURCE_ALREADY_EXISTS, null, locale), 40902);
-        return new ResponseEntity<>(errorInfo, HttpStatus.CONFLICT);
+        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(messageSource.getMessage(RESOURCE_ALREADY_EXISTS, null, locale),
+                40902,
+                HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorInfo> handleResourceNotFoundException(Locale locale) {
-        ErrorInfo errorInfo = new ErrorInfo(messageSource.getMessage(RESOURCE_NOT_FOUND, null, locale), 40402);
-        return new ResponseEntity<>(errorInfo, HttpStatus.NOT_FOUND);
+        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(messageSource.getMessage(RESOURCE_NOT_FOUND, null, locale),
+                40402,
+                HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DaoException.class)
+    public ResponseEntity<ErrorInfo> handleDaoException(Locale locale) {
+        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(messageSource.getMessage(INTERNAL_ERROR, null, locale),
+                50002,
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

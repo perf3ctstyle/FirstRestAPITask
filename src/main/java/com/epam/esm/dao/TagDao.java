@@ -1,6 +1,7 @@
 package com.epam.esm.dao;
 
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.DaoException;
 import com.epam.esm.mapper.TagRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -21,6 +22,10 @@ public class TagDao {
     private static final String CREATE = "INSERT INTO TAG(NAME) VALUES(?)";
     private static final String DELETE = "DELETE FROM TAG WHERE ID=?";
 
+    private static final int FIRST_POSITION = 1;
+
+    private static final String MORE_ENTITIES_THAN_EXPECTED = "Expected 1 entity, but received more.";
+
     public TagDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -32,21 +37,25 @@ public class TagDao {
     public Optional<Tag> getById(long id) {
         List<Tag> entities = jdbcTemplate.query(GET_BY_ID, new TagRowMapper(), id);
 
-        if (entities.size() == 1) {
+        if (entities.size() > 1) {
+            throw new DaoException(MORE_ENTITIES_THAN_EXPECTED);
+        } else if (entities.size() == 1){
             return Optional.of(entities.get(0));
-        } else {
-            return Optional.empty();
         }
+
+        return Optional.empty();
     }
 
     public Optional<Tag> getByName(String name) {
         List<Tag> entities = jdbcTemplate.query(GET_BY_NAME, new TagRowMapper(), name);
 
-        if (entities.size() == 1) {
+        if (entities.size() > 1) {
+            throw new DaoException(MORE_ENTITIES_THAN_EXPECTED);
+        } else if (entities.size() == 1){
             return Optional.of(entities.get(0));
-        } else {
-            return Optional.empty();
         }
+
+        return Optional.empty();
     }
 
     public long create(Tag tag) {
@@ -54,7 +63,7 @@ public class TagDao {
 
         jdbcTemplate.update(connection -> {
             PreparedStatement preparedStatement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1, tag.getName());
+            preparedStatement.setString(FIRST_POSITION, tag.getName());
             return preparedStatement;
         }, keyHolder);
 

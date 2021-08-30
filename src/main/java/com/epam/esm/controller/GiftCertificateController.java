@@ -1,10 +1,12 @@
-package com.epam.esm.controllers;
+package com.epam.esm.controller;
 
 import com.epam.esm.entity.ErrorInfo;
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.exception.DaoException;
 import com.epam.esm.exception.RequiredFieldsMissingException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.util.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -15,7 +17,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * This is a class that represents an API and provides basic operations for interactions with the application.
+ * This is a class that represents an API and provides basic operations for manipulations with Gift Certificate entities.
  *
  * @author Nikita Torop
  */
@@ -37,6 +39,7 @@ public class GiftCertificateController {
     private static final String RESOURCE_NOT_FOUND = "resource.not.found";
     private static final String REQUIRED_FIELDS_MISSING = "field.missing";
     private static final String ILLEGAL_ARGUMENT = "argument.illegal";
+    private static final String INTERNAL_ERROR = "error.internal";
 
     @Autowired
     public GiftCertificateController(GiftCertificateService giftCertificateService, MessageSource messageSource) {
@@ -45,10 +48,8 @@ public class GiftCertificateController {
     }
 
     /**
-     * Returns a {@link ResponseEntity} object with a {@link HttpStatus} and a {@link List} object containing {@link GiftCertificate} objects
-     * that are retrieved from a database or an {@link ErrorInfo} object if nothing was retrieved.
+     * Returns all {@link GiftCertificate} objects from a database or throws {@link ResourceNotFoundException} if nothing is found.
      * @return {@link ResponseEntity} with a {@link HttpStatus} and a {@link List} of {@link GiftCertificate} objects or a {@link ErrorInfo} object.
-     * @throws {@link ResourceNotFoundException} if nothing is retrieved from a database.
      */
     @GetMapping(produces = JSON)
     public ResponseEntity<?> getAll() {
@@ -57,11 +58,10 @@ public class GiftCertificateController {
     }
 
     /**
-     * Returns a {@link ResponseEntity} object with a {@link HttpStatus} and a {@link GiftCertificate} object
-     * that is retrieved from a database by its id or an {@link ErrorInfo} object if nothing was retrieved.
+     * Returns a {@link GiftCertificate} object from a database by its id or throws {@link ResourceNotFoundException} if nothing is retrieved from a database
+     * or {@link DaoException} in the case of unexpected behaviour on a Dao level.
      * @param id - the {@link GiftCertificate} object's id that is to be retrieved from a database.
      * @return {@link ResponseEntity} with a {@link HttpStatus} and a {@link GiftCertificate} object or a {@link ErrorInfo} object.
-     * @throws {@link ResourceNotFoundException} if nothing is retrieved from a database
      */
     @GetMapping(value = ID_PATH, produces = JSON)
     public ResponseEntity<?> getById(@PathVariable(ID) long id) {
@@ -70,12 +70,10 @@ public class GiftCertificateController {
     }
 
     /**
-     * Creates a {@link GiftCertificate} object in a database and returns with a {@link ResponseEntity} object containing {@link HttpStatus}
-     * that represents the result of execution and a {@link ErrorInfo} object if the object wasn't created in a database.
+     * Creates a {@link GiftCertificate} object in a database or throws {@link RequiredFieldsMissingException} if some fields
+     * required for creation are missing or {@link IllegalArgumentException} if the parameter object's price or duration values are lower than 0.
      * @param giftCertificate - the {@link GiftCertificate} object that is to be created in a database.
      * @return {@link ResponseEntity} with a {@link HttpStatus} alone or additionally with a {@link ErrorInfo} object.
-     * @throws {@link RequiredFieldsMissingException} if the parameter object lacks any values required for its creation in a database.
-     * @throws {@link IllegalArgumentException} if the parameter object's price or duration values are lower than 0.
      */
     @PostMapping(produces = JSON)
     public ResponseEntity<?> create(@RequestBody GiftCertificate giftCertificate) {
@@ -84,13 +82,11 @@ public class GiftCertificateController {
     }
 
     /**
-     * Updates a {@link GiftCertificate} object in a database and returns with a {@link ResponseEntity} object containing {@link HttpStatus}
-     * that represents the result of execution and a {@link ErrorInfo} object if the object wasn't updated in a database.
+     * Updates a {@link GiftCertificate} object in a database by its id or throws {@link ResourceNotFoundException} if the object
+     * with such id doesn't exist or {@link IllegalArgumentException} if the parameter object's price or duration values are lower than 0.
      * @param id - the {@link GiftCertificate} object's id that is to be updated in a database.
      * @param newGiftCertificate - the {@link GiftCertificate} object which has the new values for update in a database.
      * @return {@link ResponseEntity} with a {@link HttpStatus} alone or additionally with a {@link ErrorInfo} object.
-     * @throws {@link ResourceNotFoundException} if the object with such an id doesn't exist in a database.
-     * @throws {@link IllegalArgumentException} if the parameter object's price or duration values are lower than 0.
      */
     @PatchMapping(value = ID_PATH, produces = JSON)
     public ResponseEntity<?> updateById(@PathVariable long id, @RequestBody GiftCertificate newGiftCertificate) {
@@ -99,11 +95,10 @@ public class GiftCertificateController {
     }
 
     /**
-     * Deletes a {@link GiftCertificate} object in a database and returns with a {@link ResponseEntity} object containing {@link HttpStatus}
-     * that represents the result of execution and a {@link ErrorInfo} object if the object wasn't deleted in a database.
+     * Deletes a {@link GiftCertificate} object in a database by its id or throws {@link ResourceNotFoundException} if the object
+     * with such id doesn't exist.
      * @param id - the {@link GiftCertificate} object's id that is to be deleted in a database.
      * @return {@link ResponseEntity} with a {@link HttpStatus} alone or additionally with a {@link ErrorInfo} object.
-     * @throws {@link ResourceNotFoundException} if the object with such an id doesn't exist in a database.
      */
     @DeleteMapping(value = ID_PATH, produces = JSON)
     public ResponseEntity<?> deleteById(@PathVariable long id) {
@@ -112,13 +107,12 @@ public class GiftCertificateController {
     }
 
     /**
-     * Returns a {@link ResponseEntity} object with a {@link HttpStatus} and a {@link List} object containing {@link GiftCertificate} objects
-     * that are retrieved from a database by part of one of their fields or an {@link ErrorInfo} object if nothing was retrieved.
+     * Returns all {@link GiftCertificate} objects from a database that are found by part of one of their fields or
+     * throws {@link ResourceNotFoundException} if nothing is found or {@link IllegalArgumentException} if the fieldName
+     * doesn't match any of the fields in a database.
      * @param fieldName - the name of the field which will be used for searching {@link GiftCertificate} objects in a database.
      * @param partOfField - the value that will be used for searching
      * @return {@link ResponseEntity} with a {@link HttpStatus} and a {@link List} of {@link GiftCertificate} objects or a {@link ErrorInfo} object.
-     * @throws {@link ResourceNotFoundException} if nothing is retrieved from a database.
-     * @throws {@link IllegalArgumentException} if the fieldName doesn't match any of the fields in a database.
      */
     @GetMapping(params = { FIELD_NAME, PART_OF_FIELD }, produces = JSON)
     public ResponseEntity<?> getByPartOfField(@RequestParam String fieldName, @RequestParam String partOfField) {
@@ -127,11 +121,11 @@ public class GiftCertificateController {
     }
 
     /**
-     * Returns a {@link ResponseEntity} object with a {@link HttpStatus} and a {@link List} object containing {@link GiftCertificate} objects
-     * that are retrieved from a database by the name of the tag that is associated with them or an {@link ErrorInfo} object if nothing was retrieved.
+     * Returns all {@link GiftCertificate} objects from a database by the name of the tag that is associated with them or
+     * throws {@link ResourceNotFoundException} if a tag with such a name doesn't exist or if no associated gift certificates are found
+     * or {@link DaoException} in the case of unexpected behaviour on a Dao-level.
      * @param tagName - the name of the tag which will be used for searching {@link GiftCertificate} objects in a database.
      * @return {@link ResponseEntity} with a {@link HttpStatus} and a {@link List} of {@link GiftCertificate} objects or a {@link ErrorInfo} object.
-     * @throws {@link ResourceNotFoundException} if a tag with such a name doesn't exist or if nothing is retrieved from a database.
      */
     @GetMapping(params = TAG_NAME, produces = JSON)
     public ResponseEntity<?> getByTagName(@RequestParam String tagName) {
@@ -140,13 +134,11 @@ public class GiftCertificateController {
     }
 
     /**
-     * Returns a {@link ResponseEntity} object with a {@link HttpStatus} and a {@link List} object containing {@link GiftCertificate} objects
-     * that are retrieved from a database and sorted by a given field in a given order or an {@link ErrorInfo} object if nothing was retrieved.
+     * Returns all {@link GiftCertificate} objects sorted by a given field in a given order or throws {@link ResourceNotFoundException}
+     * if nothing is found or {@link IllegalArgumentException} if the fieldName doesn't match any of the fields in a database.
      * @param fieldName - the name of the tag which will be used for searching {@link GiftCertificate} objects in a database.
      * @param isAsc - the sorting order. The order will be ascending if this parameter equals true and descending if it equals false.
      * @return {@link ResponseEntity} with a {@link HttpStatus} and a {@link List} of {@link GiftCertificate} objects or a {@link ErrorInfo} object.
-     * @throws {@link ResourceNotFoundException} if nothing is retrieved from a database.
-     * @throws {@link IllegalArgumentException} if the fieldName doesn't match any of the fields in a database.
      */
     @GetMapping(params = { FIELD_NAME, IS_ASC }, produces = JSON)
     public ResponseEntity<?> sortByFieldInGivenOrder(@RequestParam String fieldName, @RequestParam boolean isAsc) {
@@ -156,19 +148,29 @@ public class GiftCertificateController {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorInfo> handleIllegalArgumentException(Locale locale) {
-        ErrorInfo errorInfo = new ErrorInfo(messageSource.getMessage(ILLEGAL_ARGUMENT, null, locale), 40001);
-        return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
+        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(messageSource.getMessage(ILLEGAL_ARGUMENT, null, locale),
+                40001,
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(RequiredFieldsMissingException.class)
     public ResponseEntity<ErrorInfo> handleRequiredFieldsMissingException(Locale locale) {
-        ErrorInfo errorInfo = new ErrorInfo(messageSource.getMessage(REQUIRED_FIELDS_MISSING, null, locale), 40001);
-        return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
+        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(messageSource.getMessage(REQUIRED_FIELDS_MISSING, null, locale),
+                40001,
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorInfo> handleResourceNotFoundException(Locale locale) {
-        ErrorInfo errorInfo = new ErrorInfo(messageSource.getMessage(RESOURCE_NOT_FOUND, null, locale), 40401);
-        return new ResponseEntity<>(errorInfo, HttpStatus.NOT_FOUND);
+        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(messageSource.getMessage(RESOURCE_NOT_FOUND, null, locale),
+                40401,
+                HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DaoException.class)
+    public ResponseEntity<ErrorInfo> handleDaoException(Locale locale) {
+        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(messageSource.getMessage(INTERNAL_ERROR, null, locale),
+                50001,
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

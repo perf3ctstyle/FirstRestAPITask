@@ -1,4 +1,4 @@
-package com.epam.esm.utils;
+package com.epam.esm.util;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

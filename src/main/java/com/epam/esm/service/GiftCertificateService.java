@@ -3,7 +3,7 @@ package com.epam.esm.service;
 import com.epam.esm.dao.GiftsAndTagsDao;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.exception.ResourceNotFoundException;
-import com.epam.esm.utils.DateTimeUtils;
+import com.epam.esm.util.DateTimeUtils;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 
@@ -71,7 +71,7 @@ public class GiftCertificateService {
     }
 
     @Transactional
-    public void create(GiftCertificate giftCertificate) throws RequiredFieldsMissingException {
+    public void create(GiftCertificate giftCertificate) {
         if (!giftCertificateValidator.areAllFieldsFilledForCreation(giftCertificate)) {
             throw new RequiredFieldsMissingException(REQUIRED_FIELDS_MISSING);
         }

@@ -29,6 +29,7 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import javax.sql.DataSource;
+import java.nio.charset.StandardCharsets;
 
 @Configuration
 @ComponentScan("com.epam.esm")
@@ -49,8 +50,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
 
     private static final String MESSAGE_SOURCE = "messageSource";
     private static final String MESSAGES_BASENAME = "languages/language";
-    private static final String DEFAULT_ENCODING = "UTF-8";
-
+    private static final String DATABASE_PROPERTIES_PATH = "database/database.properties";
     private static final String LOCALE = "locale";
 
     @Autowired
@@ -61,7 +61,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
     @Bean
     public static PropertySourcesPlaceholderConfigurer properties() {
         PropertySourcesPlaceholderConfigurer props = new PropertySourcesPlaceholderConfigurer();
-        props.setLocations(new ClassPathResource("/database/database.properties"));
+        props.setLocations(new ClassPathResource(DATABASE_PROPERTIES_PATH));
         return props;
     }
 
@@ -121,7 +121,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
     public MessageSource messageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename(MESSAGES_BASENAME);
-        messageSource.setDefaultEncoding(DEFAULT_ENCODING);
+        messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
         return messageSource;
     }
 
