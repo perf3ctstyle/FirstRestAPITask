@@ -2,7 +2,9 @@ package com.epam.esm.validator;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.RequiredFieldsMissingException;
+import org.springframework.stereotype.Component;
 
+@Component
 public class GiftCertificateValidator {
 
     private static final String REQUIRED_FIELDS_MISSING = "Some of the required fields were missing.";

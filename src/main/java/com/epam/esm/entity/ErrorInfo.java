@@ -1,5 +1,7 @@
 package com.epam.esm.entity;
 
+import org.springframework.stereotype.Component;
+
 public class ErrorInfo {
 
     private final String errorMessage;

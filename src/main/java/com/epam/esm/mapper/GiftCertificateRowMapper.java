@@ -4,11 +4,13 @@ import com.epam.esm.util.DateTimeUtils;
 import com.epam.esm.entity.GiftCertificate;
 import org.springframework.jdbc.core.RowMapper;
 import com.epam.esm.constant.GiftCertificateConstants;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
+@Component
 public class GiftCertificateRowMapper implements RowMapper<GiftCertificate> {
 
     private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";

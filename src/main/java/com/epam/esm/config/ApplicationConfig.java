@@ -15,8 +15,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -33,6 +35,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
 
+@Profile("prod")
 @Configuration
 @ComponentScan("com.epam.esm")
 @EnableWebMvc

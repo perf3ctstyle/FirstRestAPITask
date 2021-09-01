@@ -16,6 +16,8 @@ public class DispatcherServletInitializer extends AbstractAnnotationConfigDispat
     private static final String CHARACTER_ENCODING = "characterEncoding";
     private static final String HIDDEN_HTTP_METHOD_FILTER = "hiddenHttpMethodFilter";
     private static final String ANY_URL_PATTERN = "/*";
+    private static final String SPRING_PROFILES_ACTIVE = "spring.profiles.active";
+    private static final String PROD = "prod";
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
@@ -37,6 +39,7 @@ public class DispatcherServletInitializer extends AbstractAnnotationConfigDispat
         super.onStartup(aServletContext);
         registerCharacterEncodingFilter(aServletContext);
         registerHiddenFieldFilter(aServletContext);
+        aServletContext.setInitParameter(SPRING_PROFILES_ACTIVE, PROD);
     }
 
     private void registerCharacterEncodingFilter(ServletContext aContext) {

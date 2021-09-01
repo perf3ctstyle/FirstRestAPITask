@@ -2,9 +2,11 @@ package com.epam.esm.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class GiftAndTagDao {
 
     private final JdbcTemplate jdbcTemplate;

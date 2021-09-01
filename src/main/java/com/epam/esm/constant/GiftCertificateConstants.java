@@ -1,8 +1,11 @@
 package com.epam.esm.constant;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Arrays;
 import java.util.List;
 
+@Component
 public class GiftCertificateConstants {
 
     private GiftCertificateConstants() {
