@@ -1,4 +1,4 @@
-package com.epam.esm.dao;
+package com.epam.esm.dao.src.main.java;
 
 import com.epam.esm.constant.GiftCertificateConstants;
 import com.epam.esm.entity.GiftCertificate;

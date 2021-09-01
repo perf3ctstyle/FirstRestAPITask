@@ -1,24 +1,21 @@
 package com.epam.esm.config;
 
-import com.epam.esm.dao.GiftAndTagDao;
-import com.epam.esm.dao.GiftCertificateDao;
-import com.epam.esm.dao.TagDao;
+import com.epam.esm.dao.src.main.java.GiftAndTagDao;
+import com.epam.esm.dao.src.main.java.GiftCertificateDao;
+import com.epam.esm.dao.src.main.java.TagDao;
 import com.epam.esm.mapper.GiftCertificateRowMapper;
 import com.epam.esm.mapper.TagRowMapper;
-import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.service.TagService;
+import com.epam.esm.service.src.main.java.GiftCertificateService;
+import com.epam.esm.service.src.main.java.TagService;
 import com.epam.esm.validator.GiftCertificateValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -40,44 +37,30 @@ import java.nio.charset.StandardCharsets;
 @ComponentScan("com.epam.esm")
 @EnableWebMvc
 @EnableTransactionManagement
+@PropertySource("classpath:database.properties")
 public class ApplicationConfig implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
-
-    @Value("${database.driver}")
-    private String databaseDriver;
-    @Value("${database.url}")
-    private String databaseUrl;
-    @Value("${database.username}")
-    private String databaseUsername;
-    @Value("${database.password}")
-    private String databasePassword;
+    private final Environment environment;
 
     private static final String MESSAGE_SOURCE = "messageSource";
     private static final String MESSAGES_BASENAME = "languages/language";
-    private static final String DATABASE_PROPERTIES_PATH = "database/database.properties";
     private static final String LOCALE = "locale";
 
     @Autowired
-    public ApplicationConfig(ApplicationContext applicationContext) {
+    public ApplicationConfig(ApplicationContext applicationContext, Environment environment) {
         this.applicationContext = applicationContext;
-    }
-
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer properties() {
-        PropertySourcesPlaceholderConfigurer props = new PropertySourcesPlaceholderConfigurer();
-        props.setLocations(new ClassPathResource(DATABASE_PROPERTIES_PATH));
-        return props;
+        this.environment = environment;
     }
 
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
-        dataSource.setDriverClassName(databaseDriver);
-        dataSource.setUrl(databaseUrl);
-        dataSource.setUsername(databaseUsername);
-        dataSource.setPassword(databasePassword);
+        dataSource.setDriverClassName(environment.getProperty("database.driver"));
+        dataSource.setUrl(environment.getProperty("database.url"));
+        dataSource.setUsername(environment.getProperty("database.username"));
+        dataSource.setPassword(environment.getProperty("database.password"));
 
         return dataSource;
     }

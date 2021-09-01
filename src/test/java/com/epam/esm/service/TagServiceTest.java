@@ -1,10 +1,11 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dao.TagDao;
+import com.epam.esm.dao.src.main.java.TagDao;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.RequiredFieldsMissingException;
 import com.epam.esm.exception.ResourceAlreadyExistsException;
 import com.epam.esm.exception.ResourceNotFoundException;
+import com.epam.esm.service.src.main.java.TagService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

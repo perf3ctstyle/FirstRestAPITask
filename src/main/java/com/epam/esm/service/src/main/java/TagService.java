@@ -1,6 +1,6 @@
-package com.epam.esm.service;
+package com.epam.esm.service.src.main.java;
 
-import com.epam.esm.dao.TagDao;
+import com.epam.esm.dao.src.main.java.TagDao;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.ResourceAlreadyExistsException;
 import com.epam.esm.exception.RequiredFieldsMissingException;

@@ -1,6 +1,7 @@
 package com.epam.esm.dao;
 
 import com.epam.esm.config.TestConfig;
+import com.epam.esm.dao.src.main.java.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.mapper.GiftCertificateRowMapper;
 import org.junit.jupiter.api.AfterAll;
@@ -34,8 +35,8 @@ public class GiftCertificateDaoTest {
     public static void setUp() {
         database = new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.H2)
-                .addScript("schema.sql")
-                .addScript("h2-data.sql")
+                .addScript("file:src/test/resources/schema.sql")
+                .addScript("file:src/test/resources/h2-data.sql")
                 .build();
         JdbcTemplate jdbcTemplate = new JdbcTemplate(database);
         GiftCertificateRowMapper giftCertificateRowMapper = new GiftCertificateRowMapper();

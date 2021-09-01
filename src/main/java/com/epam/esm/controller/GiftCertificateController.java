@@ -5,7 +5,7 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.DaoException;
 import com.epam.esm.exception.RequiredFieldsMissingException;
 import com.epam.esm.exception.ResourceNotFoundException;
-import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.service.src.main.java.GiftCertificateService;
 import com.epam.esm.util.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;

@@ -1,7 +1,7 @@
-package com.epam.esm.service;
+package com.epam.esm.service.src.main.java;
 
-import com.epam.esm.dao.GiftAndTagDao;
-import com.epam.esm.dao.GiftCertificateDao;
+import com.epam.esm.dao.src.main.java.GiftAndTagDao;
+import com.epam.esm.dao.src.main.java.GiftCertificateDao;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.util.DateTimeUtils;
 import com.epam.esm.entity.GiftCertificate;

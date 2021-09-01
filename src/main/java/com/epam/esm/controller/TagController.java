@@ -6,7 +6,7 @@ import com.epam.esm.exception.DaoException;
 import com.epam.esm.exception.ResourceAlreadyExistsException;
 import com.epam.esm.exception.RequiredFieldsMissingException;
 import com.epam.esm.exception.ResourceNotFoundException;
-import com.epam.esm.service.TagService;
+import com.epam.esm.service.src.main.java.TagService;
 import com.epam.esm.util.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
