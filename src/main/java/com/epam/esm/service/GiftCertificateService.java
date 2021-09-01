@@ -158,12 +158,18 @@ public class GiftCertificateService {
     }
 
     private void updateGiftsAndTags(Long giftCertificateId, List<Tag> tags) {
-        List<Long> tagIds = tagService.createTagsIfNotPresent(tags);
-        for (Long tagId : tagIds) {
-            List<Long> linkedGiftCertificateIds = giftAndTagDao.getCertificateIdsByTagId(tagId);
+        List<Long> linkedTagIdsBeforeUpdate = giftAndTagDao.getTagIdsByCertificateId(giftCertificateId);
+        List<Long> tagIdsAfterUpdate = tagService.createTagsIfNotPresent(tags);
 
-            if (!linkedGiftCertificateIds.contains(giftCertificateId)) {
+        for (Long tagId : tagIdsAfterUpdate) {
+            if (!linkedTagIdsBeforeUpdate.contains(tagId)) {
                 giftAndTagDao.create(giftCertificateId, tagId);
+            }
+        }
+
+        for (Long linkedTagIdBeforeUpdate : linkedTagIdsBeforeUpdate) {
+            if (!tagIdsAfterUpdate.contains(linkedTagIdBeforeUpdate)) {
+                giftAndTagDao.delete(giftCertificateId, linkedTagIdBeforeUpdate);
             }
         }
     }

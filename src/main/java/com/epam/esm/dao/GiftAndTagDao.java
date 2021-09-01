@@ -12,6 +12,7 @@ public class GiftAndTagDao {
     private static final String GET_BY_CERTIFICATE_ID = "SELECT TAG_ID FROM GIFT_AND_TAG WHERE CERTIFICATE_ID = ?";
     private static final String GET_BY_TAG_ID = "SELECT CERTIFICATE_ID FROM GIFT_AND_TAG WHERE TAG_ID = ?";
     private static final String CREATE = "INSERT INTO GIFT_AND_TAG(CERTIFICATE_ID, TAG_ID) VALUES(?, ?)";
+    private static final String DELETE = "DELETE FROM GIFT_AND_TAG WHERE CERTIFICATE_ID = ? AND TAG_ID = ?";
 
     @Autowired
     public GiftAndTagDao(JdbcTemplate jdbcTemplate) {
@@ -28,5 +29,9 @@ public class GiftAndTagDao {
 
     public void create(Long certificateId, Long tagId) {
         jdbcTemplate.update(CREATE, certificateId, tagId);
+    }
+
+    public void delete(Long certificateId, Long tagId) {
+        jdbcTemplate.update(DELETE, certificateId, tagId);
     }
 }
