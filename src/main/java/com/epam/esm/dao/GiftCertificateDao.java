@@ -18,11 +18,12 @@ import java.util.Optional;
 public class GiftCertificateDao {
 
     private final JdbcTemplate jdbcTemplate;
+    private final GiftCertificateRowMapper giftCertificateRowMapper;
 
     private static final String GET_ALL = "SELECT * FROM GIFT_CERTIFICATE";
     private static final String GET_BY_ID = "SELECT * FROM GIFT_CERTIFICATE WHERE ID = ?";
     private static final String CREATE = "INSERT INTO GIFT_CERTIFICATE(NAME, DESCRIPTION, PRICE, DURATION, CREATE_DATE, LAST_UPDATE_DATE) VALUES(?, ?, ?, ?, ?, ?)";
-    private static final String UPDATE = "UPDATE GIFT_CERTIFICATE SET NAME=?, DESCRIPTION=?, PRICE=?, DURATION=?, CREATE_DATE=?, LAST_UPDATE_DATE=? WHERE ID=?";
+    private static final String UPDATE = "UPDATE GIFT_CERTIFICATE SET";
     private static final String DELETE = "DELETE FROM GIFT_CERTIFICATE WHERE ID=?";
 
     private static final int FIRST_POSITION = 1;
@@ -36,16 +37,17 @@ public class GiftCertificateDao {
     private static final String FIELD_DOES_NOT_EXIST = " field doesn't exist.";
 
     @Autowired
-    public GiftCertificateDao(JdbcTemplate jdbcTemplate) {
+    public GiftCertificateDao(JdbcTemplate jdbcTemplate, GiftCertificateRowMapper giftCertificateRowMapper) {
         this.jdbcTemplate = jdbcTemplate;
+        this.giftCertificateRowMapper = giftCertificateRowMapper;
     }
 
     public List<GiftCertificate> getAll() {
-        return jdbcTemplate.query(GET_ALL, new GiftCertificateRowMapper());
+        return jdbcTemplate.query(GET_ALL, giftCertificateRowMapper);
     }
 
     public Optional<GiftCertificate> getById(long id) {
-        List<GiftCertificate> entities = jdbcTemplate.query(GET_BY_ID, new GiftCertificateRowMapper(), id);
+        List<GiftCertificate> entities = jdbcTemplate.query(GET_BY_ID, giftCertificateRowMapper, id);
 
         if (entities.size() > 1) {
             throw new DaoException(MORE_ENTITIES_THAN_EXPECTED);
@@ -59,13 +61,13 @@ public class GiftCertificateDao {
     public List<GiftCertificate> getByPartOfField(String fieldName, String part) {
         checkFieldExistence(fieldName, GiftCertificateConstants.FIELDS);
         String query = SqlUtils.constructQueryForGettingByPartOfField(GET_ALL, fieldName, part);
-        return jdbcTemplate.query(query, new GiftCertificateRowMapper());
+        return jdbcTemplate.query(query, giftCertificateRowMapper);
     }
 
     public List<GiftCertificate> sortByFieldInGivenOrder(String fieldName, boolean isAsc) {
         checkFieldExistence(fieldName, GiftCertificateConstants.FIELDS);
         String query = SqlUtils.constructQueryForSortingByFieldInOrder(GET_ALL, fieldName, isAsc);
-        return jdbcTemplate.query(query, new GiftCertificateRowMapper());
+        return jdbcTemplate.query(query, giftCertificateRowMapper);
     }
 
     public long create(GiftCertificate giftCertificate) {
@@ -87,16 +89,9 @@ public class GiftCertificateDao {
         return keyHolder.getKey().longValue();
     }
 
-    // todo read requirements
-    public void update(GiftCertificate giftCertificate) {
-        jdbcTemplate.update(UPDATE,
-                giftCertificate.getName(),
-                giftCertificate.getDescription(),
-                giftCertificate.getPrice(),
-                giftCertificate.getDuration(),
-                giftCertificate.getCreateDate().toString(),
-                giftCertificate.getLastUpdateDate().toString(),
-                giftCertificate.getId());
+    public void update(long id, GiftCertificate giftCertificate) {
+        String query = SqlUtils.constructQueryForUpdating(UPDATE, id, giftCertificate);
+        jdbcTemplate.update(query);
     }
 
     public void deleteById(long id) {

@@ -15,6 +15,7 @@ import java.util.Optional;
 public class TagDao {
 
     private final JdbcTemplate jdbcTemplate;
+    private final TagRowMapper tagRowMapper;
 
     private static final String GET_ALL = "SELECT * FROM TAG";
     private static final String GET_BY_ID = "SELECT * FROM TAG WHERE ID = ?";
@@ -26,16 +27,17 @@ public class TagDao {
 
     private static final String MORE_ENTITIES_THAN_EXPECTED = "Expected 1 entity, but received more.";
 
-    public TagDao(JdbcTemplate jdbcTemplate) {
+    public TagDao(JdbcTemplate jdbcTemplate, TagRowMapper tagRowMapper) {
         this.jdbcTemplate = jdbcTemplate;
+        this.tagRowMapper = tagRowMapper;
     }
 
     public List<Tag> getAll() {
-        return jdbcTemplate.query(GET_ALL, new TagRowMapper());
+        return jdbcTemplate.query(GET_ALL, tagRowMapper);
     }
 
     public Optional<Tag> getById(long id) {
-        List<Tag> entities = jdbcTemplate.query(GET_BY_ID, new TagRowMapper(), id);
+        List<Tag> entities = jdbcTemplate.query(GET_BY_ID, tagRowMapper, id);
 
         if (entities.size() > 1) {
             throw new DaoException(MORE_ENTITIES_THAN_EXPECTED);
@@ -47,7 +49,7 @@ public class TagDao {
     }
 
     public Optional<Tag> getByName(String name) {
-        List<Tag> entities = jdbcTemplate.query(GET_BY_NAME, new TagRowMapper(), name);
+        List<Tag> entities = jdbcTemplate.query(GET_BY_NAME, tagRowMapper, name);
 
         if (entities.size() > 1) {
             throw new DaoException(MORE_ENTITIES_THAN_EXPECTED);

@@ -1,8 +1,11 @@
 package com.epam.esm.validator;
 
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.exception.RequiredFieldsMissingException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class GiftCertificateValidatorTest {
@@ -15,64 +18,86 @@ public class GiftCertificateValidatorTest {
     private static final Long DURATION = 10L;
 
     @Test
-    public void testShouldReturnTrueWhenAllFieldsAreFilledForCreation() {
+    public void testShouldWorkCorrectlyWhenAllFieldsAreFilledForCreation() {
         GiftCertificate giftCertificate = new GiftCertificate();
         giftCertificate.setName(NAME);
         giftCertificate.setDescription(DESCRIPTION);
         giftCertificate.setPrice(PRICE);
         giftCertificate.setDuration(DURATION);
 
-        boolean result = validator.areAllFieldsFilledForCreation(giftCertificate);
-
-        Assertions.assertTrue(result);
+        validator.checkFieldsRequiredForCreation(giftCertificate);
     }
 
     @Test
-    public void testShouldReturnFalseWhenNameFieldNotFilledForCreation() {
-        GiftCertificate giftCertificate = new GiftCertificate();
-        giftCertificate.setDescription(DESCRIPTION);
-        giftCertificate.setPrice(PRICE);
-        giftCertificate.setDuration(DURATION);
-
-        boolean result = validator.areAllFieldsFilledForCreation(giftCertificate);
-
-        Assertions.assertFalse(result);
+    public void testShouldThrowExceptionWhenNoFieldsAreFilledForCreation() {
+        assertThrows(RequiredFieldsMissingException.class, () -> {
+            GiftCertificate giftCertificate = new GiftCertificate();
+            validator.checkFieldsRequiredForCreation(giftCertificate);
+        });
     }
 
     @Test
-    public void testShouldReturnFalseWhenDescriptionFieldNotFilledForCreation() {
-        GiftCertificate giftCertificate = new GiftCertificate();
-        giftCertificate.setName(NAME);
-        giftCertificate.setPrice(PRICE);
-        giftCertificate.setDuration(DURATION);
+    public void testShouldThrowExceptionWhenNameFieldNotFilledForCreation() {
+        assertThrows(RequiredFieldsMissingException.class, () -> {
+            GiftCertificate giftCertificate = new GiftCertificate();
+            giftCertificate.setDescription(DESCRIPTION);
+            giftCertificate.setPrice(PRICE);
+            giftCertificate.setDuration(DURATION);
 
-        boolean result = validator.areAllFieldsFilledForCreation(giftCertificate);
-
-        Assertions.assertFalse(result);
+            validator.checkFieldsRequiredForCreation(giftCertificate);
+        });
     }
 
     @Test
-    public void testShouldReturnFalseWhenPriceFieldNotFilledForCreation() {
-        GiftCertificate giftCertificate = new GiftCertificate();
-        giftCertificate.setName(NAME);
-        giftCertificate.setDescription(DESCRIPTION);
-        giftCertificate.setDuration(DURATION);
+    public void testShouldThrowExceptionWhenDescriptionFieldNotFilledForCreation() {
+        assertThrows(RequiredFieldsMissingException.class, () -> {
+            GiftCertificate giftCertificate = new GiftCertificate();
+            giftCertificate.setName(NAME);
+            giftCertificate.setPrice(PRICE);
+            giftCertificate.setDuration(DURATION);
 
-        boolean result = validator.areAllFieldsFilledForCreation(giftCertificate);
-
-        Assertions.assertFalse(result);
+            validator.checkFieldsRequiredForCreation(giftCertificate);
+        });
     }
 
     @Test
-    public void testShouldReturnFalseWhenDurationFieldNotFilledForCreation() {
-        GiftCertificate giftCertificate = new GiftCertificate();
-        giftCertificate.setName(NAME);
-        giftCertificate.setDescription(DESCRIPTION);
-        giftCertificate.setPrice(PRICE);
+    public void testShouldThrowExceptionWhenPriceFieldNotFilledForCreation() {
+        assertThrows(RequiredFieldsMissingException.class, () -> {
+            GiftCertificate giftCertificate = new GiftCertificate();
+            giftCertificate.setName(NAME);
+            giftCertificate.setDescription(DESCRIPTION);
+            giftCertificate.setDuration(DURATION);
 
-        boolean result = validator.areAllFieldsFilledForCreation(giftCertificate);
+            validator.checkFieldsRequiredForCreation(giftCertificate);
+        });
+    }
 
-        Assertions.assertFalse(result);
+    @Test
+    public void testShouldThrowExceptionWhenDurationFieldNotFilledForCreation() {
+        assertThrows(RequiredFieldsMissingException.class, () -> {
+            GiftCertificate giftCertificate = new GiftCertificate();
+            giftCertificate.setName(NAME);
+            giftCertificate.setDescription(DESCRIPTION);
+            giftCertificate.setPrice(PRICE);
+
+            validator.checkFieldsRequiredForCreation(giftCertificate);
+        });
+    }
+
+    @Test
+    public void testShouldWorkCorrectlyWhenValueIsPositive() {
+        int value = 2;
+
+        validator.checkValueIsPositive(value);
+    }
+
+    @Test
+    public void testShouldThrowExceptionWhenValueIsNegative() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            int value = -1;
+
+            validator.checkValueIsPositive(value);
+        });
     }
 
 }

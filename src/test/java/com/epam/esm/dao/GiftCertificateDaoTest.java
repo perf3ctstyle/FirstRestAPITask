@@ -2,6 +2,7 @@ package com.epam.esm.dao;
 
 import com.epam.esm.config.TestConfig;
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.mapper.GiftCertificateRowMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,8 @@ public class GiftCertificateDaoTest {
                 .addScript("h2-data.sql")
                 .build();
         JdbcTemplate jdbcTemplate = new JdbcTemplate(database);
-        giftCertificateDao = new GiftCertificateDao(jdbcTemplate);
+        GiftCertificateRowMapper giftCertificateRowMapper = new GiftCertificateRowMapper();
+        giftCertificateDao = new GiftCertificateDao(jdbcTemplate, giftCertificateRowMapper);
     }
 
     @AfterAll
@@ -121,7 +123,7 @@ public class GiftCertificateDaoTest {
         GiftCertificate giftCertificate = new GiftCertificate(1L, "CER5", "NORMAL DAY CERTIFICATE", 199, 20L, firstDate, firstDate);
         giftCertificate.setName("Another name");
 
-        giftCertificateDao.update(giftCertificate);
+        giftCertificateDao.update(1L, giftCertificate);
 
         Optional<GiftCertificate> actual = giftCertificateDao.getById(giftCertificate.getId());
         assertEquals(giftCertificate, actual.get());

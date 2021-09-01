@@ -5,16 +5,16 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
 
-public class GiftsAndTagsDao {
+public class GiftAndTagDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private static final String GET_BY_CERTIFICATE_ID = "SELECT TAG_ID FROM GIFTS_AND_TAGS WHERE CERTIFICATE_ID = ?";
-    private static final String GET_BY_TAG_ID = "SELECT CERTIFICATE_ID FROM GIFTS_AND_TAGS WHERE TAG_ID = ?";
-    private static final String CREATE = "INSERT INTO GIFTS_AND_TAGS(CERTIFICATE_ID, TAG_ID) VALUES(?, ?)";
+    private static final String GET_BY_CERTIFICATE_ID = "SELECT TAG_ID FROM GIFT_AND_TAG WHERE CERTIFICATE_ID = ?";
+    private static final String GET_BY_TAG_ID = "SELECT CERTIFICATE_ID FROM GIFT_AND_TAG WHERE TAG_ID = ?";
+    private static final String CREATE = "INSERT INTO GIFT_AND_TAG(CERTIFICATE_ID, TAG_ID) VALUES(?, ?)";
 
     @Autowired
-    public GiftsAndTagsDao(JdbcTemplate jdbcTemplate) {
+    public GiftAndTagDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

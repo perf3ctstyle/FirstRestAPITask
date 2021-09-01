@@ -8,9 +8,14 @@ import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 
 public class DispatcherServletInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+
+    private static final String CHARACTER_ENCODING = "characterEncoding";
+    private static final String HIDDEN_HTTP_METHOD_FILTER = "hiddenHttpMethodFilter";
+    private static final String ANY_URL_PATTERN = "/*";
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
@@ -38,15 +43,15 @@ public class DispatcherServletInitializer extends AbstractAnnotationConfigDispat
         EnumSet<DispatcherType> dispatcherTypes = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD);
 
         CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
-        characterEncodingFilter.setEncoding("UTF-8");
+        characterEncodingFilter.setEncoding(StandardCharsets.UTF_8.name());
         characterEncodingFilter.setForceEncoding(true);
 
-        FilterRegistration.Dynamic characterEncoding = aContext.addFilter("characterEncoding", characterEncodingFilter);
-        characterEncoding.addMappingForUrlPatterns(dispatcherTypes, true, "/*");
+        FilterRegistration.Dynamic characterEncoding = aContext.addFilter(CHARACTER_ENCODING, characterEncodingFilter);
+        characterEncoding.addMappingForUrlPatterns(dispatcherTypes, true, ANY_URL_PATTERN);
     }
 
     private void registerHiddenFieldFilter(ServletContext aContext) {
-        aContext.addFilter("hiddenHttpMethodFilter",
-                new HiddenHttpMethodFilter()).addMappingForUrlPatterns(null ,true, "/*");
+        aContext.addFilter(HIDDEN_HTTP_METHOD_FILTER, new HiddenHttpMethodFilter())
+                .addMappingForUrlPatterns(null ,true, ANY_URL_PATTERN);
     }
 }

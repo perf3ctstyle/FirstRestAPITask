@@ -1,8 +1,10 @@
 package com.epam.esm.config;
 
-import com.epam.esm.dao.GiftsAndTagsDao;
+import com.epam.esm.dao.GiftAndTagDao;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
+import com.epam.esm.mapper.GiftCertificateRowMapper;
+import com.epam.esm.mapper.TagRowMapper;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validator.GiftCertificateValidator;
@@ -88,13 +90,26 @@ public class ApplicationConfig implements WebMvcConfigurer {
     }
 
     @Bean
+    public GiftCertificateRowMapper giftCertificateRowMapper() {
+        return new GiftCertificateRowMapper();
+    }
+
+    @Bean
+    public TagRowMapper tagRowMapper() {
+        return new TagRowMapper();
+    }
+
+    @Bean
     public GiftCertificateDao giftCertificateDao() {
-        return new GiftCertificateDao(jdbcTemplate());
+        return new GiftCertificateDao(jdbcTemplate(), giftCertificateRowMapper());
     }
 
     @Bean
     public GiftCertificateService giftCertificateService() {
-        return new GiftCertificateService(giftCertificateDao(), tagService(), giftAndTagDao(), giftCertificateValidator());
+        return new GiftCertificateService(giftCertificateDao(),
+                tagService(),
+                giftAndTagDao(),
+                giftCertificateValidator());
     }
 
     @Bean
@@ -104,7 +119,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
 
     @Bean
     public TagDao tagDao() {
-        return new TagDao(jdbcTemplate());
+        return new TagDao(jdbcTemplate(), tagRowMapper());
     }
 
     @Bean
@@ -113,8 +128,8 @@ public class ApplicationConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public GiftsAndTagsDao giftAndTagDao() {
-        return new GiftsAndTagsDao(jdbcTemplate());
+    public GiftAndTagDao giftAndTagDao() {
+        return new GiftAndTagDao(jdbcTemplate());
     }
 
     @Bean(MESSAGE_SOURCE)

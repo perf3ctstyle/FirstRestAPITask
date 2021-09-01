@@ -2,6 +2,7 @@ package com.epam.esm.dao;
 
 import com.epam.esm.config.TestConfig;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.mapper.TagRowMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,8 @@ public class TagDaoTest {
                 .addScript("h2-data.sql")
                 .build();
         JdbcTemplate jdbcTemplate = new JdbcTemplate(database);
-        tagDao = new TagDao(jdbcTemplate);
+        TagRowMapper tagRowMapper = new TagRowMapper();
+        tagDao = new TagDao(jdbcTemplate, tagRowMapper);
     }
 
     @AfterAll

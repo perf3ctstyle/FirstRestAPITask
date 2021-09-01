@@ -24,7 +24,13 @@ public class GiftCertificate {
     public GiftCertificate() {
     }
 
-    public GiftCertificate(Long id, String name, String description, Integer price, Long duration, LocalDateTime createDate, LocalDateTime lastUpdateDate) {
+    public GiftCertificate(Long id,
+                           String name,
+                           String description,
+                           Integer price,
+                           Long duration,
+                           LocalDateTime createDate,
+                           LocalDateTime lastUpdateDate) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -34,7 +40,14 @@ public class GiftCertificate {
         this.lastUpdateDate = lastUpdateDate;
     }
 
-    public GiftCertificate(Long id, String name, String description, Integer price, Long duration, LocalDateTime createDate, LocalDateTime lastUpdateDate, List<Tag> tags) {
+    public GiftCertificate(Long id,
+                           String name,
+                           String description,
+                           Integer price,
+                           Long duration,
+                           LocalDateTime createDate,
+                           LocalDateTime lastUpdateDate,
+                           List<Tag> tags) {
         this(id, name, description, price, duration, createDate, lastUpdateDate);
         this.tags = tags;
     }
@@ -111,7 +124,9 @@ public class GiftCertificate {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         GiftCertificate that = (GiftCertificate) o;
         return Objects.equals(id, that.id) && name.equals(that.name) && description.equals(that.description) && price.equals(that.price) && duration.equals(that.duration) && createDate.equals(that.createDate) && lastUpdateDate.equals(that.lastUpdateDate) && Objects.equals(tags, that.tags);
     }
