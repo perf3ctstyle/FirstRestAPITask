@@ -5,6 +5,9 @@ import java.util.List;
 
 public class GiftCertificateConstants {
 
+    private GiftCertificateConstants() {
+    }
+
     public static final String ID = "ID";
     public static final String NAME = "NAME";
     public static final String DESCRIPTION = "DESCRIPTION";

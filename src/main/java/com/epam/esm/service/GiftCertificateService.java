@@ -57,10 +57,7 @@ public class GiftCertificateService {
 
     @Transactional
     public void create(GiftCertificate giftCertificate) {
-        giftCertificateValidator.checkFieldsRequiredForCreation(giftCertificate);
-
-        giftCertificateValidator.checkValueIsPositive(giftCertificate.getPrice());
-        giftCertificateValidator.checkValueIsPositive(giftCertificate.getDuration());
+        giftCertificateValidator.validateForCreation(giftCertificate);
 
         LocalDateTime currentDateTime = DateTimeUtils.nowOfPattern(DATE_TIME_PATTERN);
         giftCertificate.setCreateDate(currentDateTime);
@@ -81,8 +78,7 @@ public class GiftCertificateService {
             throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
 
-        giftCertificateValidator.checkValueIsPositive(giftCertificate.getPrice());
-        giftCertificateValidator.checkValueIsPositive(giftCertificate.getDuration());
+        giftCertificateValidator.validateForUpdate(giftCertificate);
 
         LocalDateTime lastUpdateDate = DateTimeUtils.nowOfPattern(DATE_TIME_PATTERN);
         giftCertificate.setLastUpdateDate(lastUpdateDate);
@@ -164,9 +160,9 @@ public class GiftCertificateService {
     private void updateGiftsAndTags(Long giftCertificateId, List<Tag> tags) {
         List<Long> tagIds = tagService.createTagsIfNotPresent(tags);
         for (Long tagId : tagIds) {
-            List<Long> giftCertificateIds = giftAndTagDao.getCertificateIdsByTagId(tagId);
+            List<Long> linkedGiftCertificateIds = giftAndTagDao.getCertificateIdsByTagId(tagId);
 
-            if (!giftCertificateIds.contains(giftCertificateId)) {
+            if (!linkedGiftCertificateIds.contains(giftCertificateId)) {
                 giftAndTagDao.create(giftCertificateId, tagId);
             }
         }
