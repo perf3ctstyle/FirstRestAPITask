@@ -9,6 +9,7 @@ public class GiftCertificateValidator {
 
     private static final String REQUIRED_FIELDS_MISSING = "Some of the required fields were missing.";
     private static final String NEGATIVE_VALUE_PROHIBITED = "Negative value was found in a field that is supposed to be positive.";
+    private static final String EMPTY_VALUE = "Some of the fields didn't equal null, but had empty values";
 
     public void validateForCreation(GiftCertificate giftCertificate) {
         String name = giftCertificate.getName();
@@ -31,11 +32,16 @@ public class GiftCertificateValidator {
     }
 
     public void validateForUpdate(GiftCertificate giftCertificate) {
+        String name = giftCertificate.getName();
+        String description = giftCertificate.getDescription();
         Integer price = giftCertificate.getPrice();
         Long duration = giftCertificate.getDuration();
 
-        if ((price != null && price <= 0)
-                || (duration != null && duration <= 0))  {
+        if ((name != null && name.isEmpty()) || (description != null && description.isEmpty())) {
+            throw new IllegalArgumentException(EMPTY_VALUE);
+        }
+
+        if ((price != null && price <= 0) || (duration != null && duration <= 0))  {
             throw new IllegalArgumentException(NEGATIVE_VALUE_PROHIBITED);
         }
 

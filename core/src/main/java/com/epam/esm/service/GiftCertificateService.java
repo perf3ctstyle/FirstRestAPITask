@@ -27,7 +27,10 @@ public class GiftCertificateService {
     private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
     private static final String RESOURCE_NOT_FOUND = "The required resource wasn't found.";
 
-    public GiftCertificateService(GiftCertificateDao giftCertificateDao, TagService tagService, GiftAndTagDao giftAndTagDao, GiftCertificateValidator giftCertificateValidator) {
+    public GiftCertificateService(GiftCertificateDao giftCertificateDao,
+                                  TagService tagService,
+                                  GiftAndTagDao giftAndTagDao,
+                                  GiftCertificateValidator giftCertificateValidator) {
         this.giftCertificateDao = giftCertificateDao;
         this.tagService = tagService;
         this.giftAndTagDao = giftAndTagDao;
@@ -36,7 +39,6 @@ public class GiftCertificateService {
 
     public List<GiftCertificate> getAll() {
         List<GiftCertificate> giftCertificates = giftCertificateDao.getAll();
-
         setGiftCertificateTags(giftCertificates);
 
         return giftCertificates;
@@ -44,6 +46,7 @@ public class GiftCertificateService {
 
     public GiftCertificate getById(long id) {
         Optional<GiftCertificate> optionalGiftCertificate = giftCertificateDao.getById(id);
+
         if (optionalGiftCertificate.isEmpty()) {
             throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
@@ -65,6 +68,7 @@ public class GiftCertificateService {
         Long giftCertificateId = giftCertificateDao.create(giftCertificate);
 
         List<Tag> tags = giftCertificate.getTags();
+
         if (tags != null && !(tags.isEmpty())) {
             updateGiftsAndTags(giftCertificateId, tags);
         }
@@ -73,6 +77,7 @@ public class GiftCertificateService {
     @Transactional
     public void updateById(long id, GiftCertificate giftCertificate) {
         GiftCertificate oldGiftCertificate = getById(id);
+
         if (oldGiftCertificate == null) {
             throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
@@ -85,6 +90,7 @@ public class GiftCertificateService {
         giftCertificateDao.update(id, giftCertificate);
 
         List<Tag> tags = giftCertificate.getTags();
+
         if (tags != null && !(tags.isEmpty())) {
             updateGiftsAndTags(id, tags);
         }
@@ -92,6 +98,7 @@ public class GiftCertificateService {
 
     public void deleteById(long id) {
         Optional<GiftCertificate> optionalGiftCertificate = giftCertificateDao.getById(id);
+
         if (optionalGiftCertificate.isEmpty()) {
             throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
@@ -101,7 +108,6 @@ public class GiftCertificateService {
 
     public List<GiftCertificate> getByPartOfField(String fieldName, String partOfField) {
         List<GiftCertificate> giftCertificates = giftCertificateDao.getByPartOfField(fieldName, partOfField);
-
         setGiftCertificateTags(giftCertificates);
 
         return giftCertificates;
@@ -109,6 +115,7 @@ public class GiftCertificateService {
 
     public List<GiftCertificate> getByTagName(String tagName) {
         Tag tag = tagService.getByName(tagName);
+
         if (tag == null) {
             throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
@@ -117,6 +124,7 @@ public class GiftCertificateService {
         List<Long> certificateIds = giftAndTagDao.getCertificateIdsByTagId(tagId);
 
         List<GiftCertificate> giftCertificates = new ArrayList<>();
+
         for (Long certificateId : certificateIds) {
             Optional<GiftCertificate> optionalGiftCertificate = giftCertificateDao.getById(certificateId);
             optionalGiftCertificate.ifPresent(giftCertificates::add);
@@ -127,7 +135,6 @@ public class GiftCertificateService {
 
     public List<GiftCertificate> sortByFieldInGivenOrder(String fieldName, boolean isAsc) {
         List<GiftCertificate> giftCertificates = giftCertificateDao.sortByFieldInGivenOrder(fieldName, isAsc);
-
         setGiftCertificateTags(giftCertificates);
 
         return giftCertificates;

@@ -30,6 +30,7 @@ public class TagService {
 
     public Tag getById(long id) {
         Optional<Tag> optionalTag = tagDao.getById(id);
+
         if (optionalTag.isEmpty()) {
             throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
@@ -39,6 +40,7 @@ public class TagService {
 
     public Tag getByName(String name) {
         Optional<Tag> optionalTag = tagDao.getByName(name);
+
         if (optionalTag.isEmpty()) {
             throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
@@ -52,6 +54,7 @@ public class TagService {
         }
 
         Optional<Tag> optionalTag = tagDao.getByName(tag.getName());
+
         if (optionalTag.isPresent()) {
             throw new ResourceAlreadyExistsException(TAG_WITH_NAME_ALREADY_EXISTS);
         }
@@ -61,6 +64,7 @@ public class TagService {
 
     public List<Long> createTagsIfNotPresent(List<Tag> tags) {
         List<Long> ids = new ArrayList<>();
+
         for (Tag tag : tags) {
             String tagName = tag.getName();
             Optional<Tag> optionalTag = tagDao.getByName(tagName);
@@ -94,6 +98,7 @@ public class TagService {
 
     public void deleteById(long id) {
         Optional<Tag> optionalTag = tagDao.getById(id);
+
         if (optionalTag.isEmpty()) {
             throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }

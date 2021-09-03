@@ -20,6 +20,8 @@ public class GiftCertificate {
     private LocalDateTime lastUpdateDate;
     private List<Tag> tags;
 
+    private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+
     public GiftCertificate() {
     }
 
@@ -87,7 +89,7 @@ public class GiftCertificate {
         this.createDate = createDate;
     }
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    @JsonFormat(pattern = DATE_TIME_PATTERN)
     public LocalDateTime getCreateDate() {
         return createDate;
     }
@@ -96,7 +98,7 @@ public class GiftCertificate {
         this.lastUpdateDate = lastUpdateDate;
     }
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+    @JsonFormat(pattern = DATE_TIME_PATTERN)
     public LocalDateTime getLastUpdateDate() {
         return lastUpdateDate;
     }
@@ -127,7 +129,14 @@ public class GiftCertificate {
             return false;
         }
         GiftCertificate that = (GiftCertificate) o;
-        return Objects.equals(id, that.id) && name.equals(that.name) && description.equals(that.description) && price.equals(that.price) && duration.equals(that.duration) && createDate.equals(that.createDate) && lastUpdateDate.equals(that.lastUpdateDate) && Objects.equals(tags, that.tags);
+        return Objects.equals(id, that.id)
+                && name.equals(that.name)
+                && description.equals(that.description)
+                && price.equals(that.price)
+                && duration.equals(that.duration)
+                && createDate.equals(that.createDate)
+                && lastUpdateDate.equals(that.lastUpdateDate)
+                && Objects.equals(tags, that.tags);
     }
 
     @Override
