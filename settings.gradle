@@ -1,0 +1,4 @@
+rootProject.name = 'SpringApp'
+include 'core'
+include 'web'
+
