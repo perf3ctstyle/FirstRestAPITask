@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -25,15 +26,15 @@ public class GiftCertificateDao {
     private static final String GET_ALL = "SELECT * FROM GIFT_CERTIFICATE";
     private static final String GET_BY_ID = "SELECT * FROM GIFT_CERTIFICATE WHERE ID = ?";
     private static final String CREATE = "INSERT INTO GIFT_CERTIFICATE(NAME, DESCRIPTION, PRICE, DURATION, CREATE_DATE, LAST_UPDATE_DATE) VALUES(?, ?, ?, ?, ?, ?)";
-    private static final String UPDATE = "UPDATE GIFT_CERTIFICATE SET";
+    private static final String UPDATE = "UPDATE GIFT_CERTIFICATE SET ";
     private static final String DELETE = "DELETE FROM GIFT_CERTIFICATE WHERE ID=?";
 
-    private static final int FIRST_POSITION = 1;
-    private static final int SECOND_POSITION = 2;
-    private static final int THIRD_POSITION = 3;
-    private static final int FOURTH_POSITION = 4;
-    private static final int FIFTH_POSITION = 5;
-    private static final int SIXTH_POSITION = 6;
+    private static final int NAME_POSITION = 1;
+    private static final int DESCRIPTION_POSITION = 2;
+    private static final int PRICE_POSITION = 3;
+    private static final int DURATION_POSITION = 4;
+    private static final int CREATE_DATE_POSITION = 5;
+    private static final int LAST_UPDATE_DATE_POSITION = 6;
 
     private static final String MORE_ENTITIES_THAN_EXPECTED = "Expected 1 entity, but received more.";
     private static final String FIELD_DOES_NOT_EXIST = " field doesn't exist.";
@@ -78,12 +79,12 @@ public class GiftCertificateDao {
         jdbcTemplate.update(connection -> {
             PreparedStatement preparedStatement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS);
 
-            preparedStatement.setString(FIRST_POSITION, giftCertificate.getName());
-            preparedStatement.setString(SECOND_POSITION, giftCertificate.getDescription());
-            preparedStatement.setInt(THIRD_POSITION, giftCertificate.getPrice());
-            preparedStatement.setLong(FOURTH_POSITION, giftCertificate.getDuration());
-            preparedStatement.setString(FIFTH_POSITION, giftCertificate.getCreateDate().toString());
-            preparedStatement.setString(SIXTH_POSITION, giftCertificate.getLastUpdateDate().toString());
+            preparedStatement.setString(NAME_POSITION, giftCertificate.getName());
+            preparedStatement.setString(DESCRIPTION_POSITION, giftCertificate.getDescription());
+            preparedStatement.setInt(PRICE_POSITION, giftCertificate.getPrice());
+            preparedStatement.setLong(DURATION_POSITION, giftCertificate.getDuration());
+            preparedStatement.setString(CREATE_DATE_POSITION, giftCertificate.getCreateDate().toString());
+            preparedStatement.setString(LAST_UPDATE_DATE_POSITION, giftCertificate.getLastUpdateDate().toString());
 
             return preparedStatement;
         }, keyHolder);
@@ -91,8 +92,8 @@ public class GiftCertificateDao {
         return keyHolder.getKey().longValue();
     }
 
-    public void update(long id, GiftCertificate giftCertificate) {
-        String query = SqlUtils.constructQueryForUpdatingGiftCertificate(UPDATE, id, giftCertificate);
+    public void update(long id, Map<String, String> fieldNameValueForUpdate) {
+        String query = SqlUtils.constructQueryForUpdating(UPDATE, id, fieldNameValueForUpdate);
         jdbcTemplate.update(query);
     }
 

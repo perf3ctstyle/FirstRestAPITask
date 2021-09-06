@@ -67,7 +67,7 @@ public class GiftCertificateServiceTest {
         giftCertificate.setDuration(100L);
         doNothing().when(giftCertificateValidator).validateForCreation(giftCertificate);
         List<Long> tagIds = new ArrayList<>();
-        Mockito.when(tagService.createTagsIfNotPresent(null)).thenReturn(tagIds);
+        Mockito.when(tagService.createTagsIfNotCreated(null)).thenReturn(tagIds);
         Long certificateId = 0L;
         Mockito.when(giftCertificateDao.create(giftCertificate)).thenReturn(certificateId);
 

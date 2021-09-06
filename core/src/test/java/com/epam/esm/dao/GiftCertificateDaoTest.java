@@ -5,6 +5,7 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.mapper.GiftCertificateRowMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
@@ -17,7 +18,9 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -124,8 +127,10 @@ public class GiftCertificateDaoTest {
         LocalDateTime firstDate = LocalDateTime.parse("2021-07-02T06:12:15.156", DateTimeFormatter.ISO_DATE_TIME);
         GiftCertificate giftCertificate = new GiftCertificate(1L, "CER5", "NORMAL DAY CERTIFICATE", 199, 20L, firstDate, firstDate);
         giftCertificate.setName("Another name");
+        Map<String, String> fieldNameValueForUpdate = new HashMap<>();
+        fieldNameValueForUpdate.put("NAME", "Another name");
 
-        giftCertificateDao.update(1L, giftCertificate);
+        giftCertificateDao.update(1L, fieldNameValueForUpdate);
 
         Optional<GiftCertificate> actual = giftCertificateDao.getById(giftCertificate.getId());
         assertEquals(giftCertificate, actual.get());

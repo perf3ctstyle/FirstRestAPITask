@@ -8,6 +8,7 @@ import com.epam.esm.mapper.TagRowMapper;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validator.GiftCertificateValidator;
+import com.epam.esm.validator.TagValidator;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -111,7 +112,12 @@ public class ApplicationConfig implements WebMvcConfigurer {
 
     @Bean
     public TagService tagService() {
-        return new TagService(tagDao());
+        return new TagService(tagDao(), tagValidator());
+    }
+
+    @Bean
+    public TagValidator tagValidator() {
+        return new TagValidator();
     }
 
     @Bean

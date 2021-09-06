@@ -87,6 +87,7 @@ public class GiftCertificateController {
     /**
      * Creates a {@link GiftCertificate} object in a database or throws {@link RequiredFieldsMissingException} if some fields
      * required for creation are missing or {@link IllegalArgumentException} if the parameter object's price or duration values are lower than 0.
+     *
      * @param giftCertificate - the {@link GiftCertificate} object that is to be created in a database.
      * @return {@link ResponseEntity} with a {@link HttpStatus} alone or additionally with a {@link ErrorInfo} object.
      */
@@ -100,13 +101,13 @@ public class GiftCertificateController {
      * Updates a {@link GiftCertificate} object in a database by its id or throws {@link ResourceNotFoundException} if the object
      * with such id doesn't exist or {@link IllegalArgumentException} if the parameter object's price or duration values are lower than 0.
      *
-     * @param id                 - the {@link GiftCertificate} object's id that is to be updated in a database.
-     * @param newGiftCertificate - the {@link GiftCertificate} object which has the new values for update in a database.
+     * @param id              - the {@link GiftCertificate} object's id that is to be updated in a database.
+     * @param giftCertificate - the {@link GiftCertificate} object which has the new values for update in a database.
      * @return {@link ResponseEntity} with a {@link HttpStatus} alone or additionally with a {@link ErrorInfo} object.
      */
     @PatchMapping(value = ID_PATH, produces = JSON)
-    public ResponseEntity<?> updateById(@PathVariable long id, @RequestBody GiftCertificate newGiftCertificate) {
-        giftCertificateService.updateById(id, newGiftCertificate);
+    public ResponseEntity<?> updateById(@PathVariable long id, @RequestBody GiftCertificate giftCertificate) {
+        giftCertificateService.updateById(id, giftCertificate);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

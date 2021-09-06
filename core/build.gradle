@@ -35,6 +35,10 @@ dependencies {
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.12.5'
 
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+
+
     // https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
     compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
 
