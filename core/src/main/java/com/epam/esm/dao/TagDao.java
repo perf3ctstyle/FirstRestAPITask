@@ -25,7 +25,7 @@ public class TagDao {
     private static final String CREATE = "INSERT INTO TAG(NAME) VALUES(?)";
     private static final String DELETE = "DELETE FROM TAG WHERE ID=?";
 
-    private static final int FIRST_POSITION = 1;
+    private static final int NAME_POSITION = 1;
 
     private static final String MORE_ENTITIES_THAN_EXPECTED = "Expected 1 entity, but received more.";
 
@@ -51,7 +51,7 @@ public class TagDao {
 
         jdbcTemplate.update(connection -> {
             PreparedStatement preparedStatement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(FIRST_POSITION, tag.getName());
+            preparedStatement.setString(NAME_POSITION, tag.getName());
             return preparedStatement;
         }, keyHolder);
 
