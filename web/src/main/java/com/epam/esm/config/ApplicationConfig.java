@@ -20,6 +20,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.LocaleResolver;
@@ -32,49 +34,25 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
 
-@Profile("prod")
 @Configuration
 @ComponentScan("com.epam.esm")
 @EnableWebMvc
 @EnableTransactionManagement
-@PropertySource("classpath:database/database.properties")
+@PropertySource("classpath:database/prod_database.properties")
 public class ApplicationConfig implements WebMvcConfigurer {
-
-    private final Environment environment;
-
-    private static final String DATABASE_DRIVER = "database.driver";
-    private static final String DATABASE_URL = "database.url";
-    private static final String DATABASE_USERNAME = "database.username";
-    private static final String DATABASE_PASSWORD = "database.password";
 
     private static final String MESSAGE_SOURCE = "messageSource";
     private static final String MESSAGES_BASENAME = "languages/language";
     private static final String LOCALE = "locale";
 
-    public ApplicationConfig(Environment environment) {
-        this.environment = environment;
+    @Bean
+    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
     }
 
     @Bean
-    public DataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-
-        dataSource.setDriverClassName(environment.getProperty(DATABASE_DRIVER));
-        dataSource.setUrl(environment.getProperty(DATABASE_URL));
-        dataSource.setUsername(environment.getProperty(DATABASE_USERNAME));
-        dataSource.setPassword(environment.getProperty(DATABASE_PASSWORD));
-
-        return dataSource;
-    }
-
-    @Bean
-    public PlatformTransactionManager transactionManager() {
-        return new DataSourceTransactionManager(dataSource());
-    }
-
-    @Bean
-    public JdbcTemplate jdbcTemplate() {
-        return new JdbcTemplate(dataSource());
+    public PlatformTransactionManager transactionManager(DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
     }
 
     @Bean
@@ -88,15 +66,15 @@ public class ApplicationConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public GiftCertificateDao giftCertificateDao() {
-        return new GiftCertificateDao(jdbcTemplate(), giftCertificateRowMapper());
+    public GiftCertificateDao giftCertificateDao(JdbcTemplate jdbcTemplate) {
+        return new GiftCertificateDao(jdbcTemplate, giftCertificateRowMapper());
     }
 
     @Bean
-    public GiftCertificateService giftCertificateService() {
-        return new GiftCertificateService(giftCertificateDao(),
-                tagService(),
-                giftAndTagDao(),
+    public GiftCertificateService giftCertificateService(JdbcTemplate jdbcTemplate) {
+        return new GiftCertificateService(giftCertificateDao(jdbcTemplate),
+                tagService(jdbcTemplate),
+                giftAndTagDao(jdbcTemplate),
                 giftCertificateValidator());
     }
 
@@ -106,13 +84,13 @@ public class ApplicationConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public TagDao tagDao() {
-        return new TagDao(jdbcTemplate(), tagRowMapper());
+    public TagDao tagDao(JdbcTemplate jdbcTemplate) {
+        return new TagDao(jdbcTemplate, tagRowMapper());
     }
 
     @Bean
-    public TagService tagService() {
-        return new TagService(tagDao(), tagValidator());
+    public TagService tagService(JdbcTemplate jdbcTemplate) {
+        return new TagService(tagDao(jdbcTemplate), tagValidator());
     }
 
     @Bean
@@ -121,8 +99,8 @@ public class ApplicationConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public GiftAndTagDao giftAndTagDao() {
-        return new GiftAndTagDao(jdbcTemplate());
+    public GiftAndTagDao giftAndTagDao(JdbcTemplate jdbcTemplate) {
+        return new GiftAndTagDao(jdbcTemplate);
     }
 
     @Bean(MESSAGE_SOURCE)

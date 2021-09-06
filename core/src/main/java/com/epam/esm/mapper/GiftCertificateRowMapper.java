@@ -1,9 +1,9 @@
 package com.epam.esm.mapper;
 
-import com.epam.esm.util.DateTimeUtils;
-import com.epam.esm.entity.GiftCertificate;
-import org.springframework.jdbc.core.RowMapper;
 import com.epam.esm.constant.GiftCertificateConstants;
+import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.util.DateTimeUtils;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;

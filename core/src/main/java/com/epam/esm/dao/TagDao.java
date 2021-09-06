@@ -3,6 +3,7 @@ package com.epam.esm.dao;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.DaoException;
 import com.epam.esm.mapper.TagRowMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -19,9 +20,9 @@ public class TagDao {
     private final JdbcTemplate jdbcTemplate;
     private final TagRowMapper tagRowMapper;
 
-    private static final String GET_ALL = "SELECT * FROM TAG";
-    private static final String GET_BY_ID = "SELECT * FROM TAG WHERE ID = ?";
-    private static final String GET_BY_NAME = "SELECT * FROM TAG WHERE NAME = ?";
+    private static final String GET_ALL = "SELECT ID, NAME FROM TAG";
+    private static final String GET_BY_ID = "SELECT ID, NAME FROM TAG WHERE ID = ?";
+    private static final String GET_BY_NAME = "SELECT ID, NAME FROM TAG WHERE NAME = ?";
     private static final String CREATE = "INSERT INTO TAG(NAME) VALUES(?)";
     private static final String DELETE = "DELETE FROM TAG WHERE ID=?";
 
@@ -29,6 +30,7 @@ public class TagDao {
 
     private static final String MORE_ENTITIES_THAN_EXPECTED = "Expected 1 entity, but received more.";
 
+    @Autowired
     public TagDao(JdbcTemplate jdbcTemplate, TagRowMapper tagRowMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.tagRowMapper = tagRowMapper;

@@ -1,7 +1,5 @@
 package com.epam.esm.util;
 
-import com.epam.esm.entity.GiftCertificate;
-
 import java.util.Map;
 
 public class SqlUtils {

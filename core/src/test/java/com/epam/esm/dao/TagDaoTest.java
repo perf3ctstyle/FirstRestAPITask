@@ -21,7 +21,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 @ContextConfiguration(classes = TestConfig.class, loader = AnnotationConfigContextLoader.class)
 public class TagDaoTest {
 
@@ -33,7 +33,7 @@ public class TagDaoTest {
         database = new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.H2)
                 .addScript("schema.sql")
-                .addScript("h2-data.sql")
+                .addScript("data.sql")
                 .build();
         JdbcTemplate jdbcTemplate = new JdbcTemplate(database);
         TagRowMapper tagRowMapper = new TagRowMapper();

@@ -5,7 +5,6 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.mapper.GiftCertificateRowMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
@@ -26,7 +25,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 @ContextConfiguration(classes = TestConfig.class, loader = AnnotationConfigContextLoader.class)
 public class GiftCertificateDaoTest {
 
@@ -38,7 +37,7 @@ public class GiftCertificateDaoTest {
         database = new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.H2)
                 .addScript("schema.sql")
-                .addScript("h2-data.sql")
+                .addScript("data.sql")
                 .build();
         JdbcTemplate jdbcTemplate = new JdbcTemplate(database);
         GiftCertificateRowMapper giftCertificateRowMapper = new GiftCertificateRowMapper();

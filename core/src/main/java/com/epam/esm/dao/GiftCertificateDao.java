@@ -23,8 +23,8 @@ public class GiftCertificateDao {
     private final JdbcTemplate jdbcTemplate;
     private final GiftCertificateRowMapper giftCertificateRowMapper;
 
-    private static final String GET_ALL = "SELECT * FROM GIFT_CERTIFICATE";
-    private static final String GET_BY_ID = "SELECT * FROM GIFT_CERTIFICATE WHERE ID = ?";
+    private static final String GET_ALL = "SELECT ID, NAME, DESCRIPTION, PRICE, DURATION, CREATE_DATE, LAST_UPDATE_DATE FROM GIFT_CERTIFICATE";
+    private static final String GET_BY_ID = "SELECT ID, NAME, DESCRIPTION, PRICE, DURATION, CREATE_DATE, LAST_UPDATE_DATE FROM GIFT_CERTIFICATE WHERE ID = ?";
     private static final String CREATE = "INSERT INTO GIFT_CERTIFICATE(NAME, DESCRIPTION, PRICE, DURATION, CREATE_DATE, LAST_UPDATE_DATE) VALUES(?, ?, ?, ?, ?, ?)";
     private static final String UPDATE = "UPDATE GIFT_CERTIFICATE SET ";
     private static final String DELETE = "DELETE FROM GIFT_CERTIFICATE WHERE ID=?";

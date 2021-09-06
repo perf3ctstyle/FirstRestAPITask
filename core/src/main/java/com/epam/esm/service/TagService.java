@@ -1,17 +1,12 @@
 package com.epam.esm.service;
 
 import com.epam.esm.dao.TagDao;
-import com.epam.esm.entity.ErrorInfo;
-import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.DaoException;
-import com.epam.esm.exception.ResourceAlreadyExistsException;
 import com.epam.esm.exception.RequiredFieldsMissingException;
+import com.epam.esm.exception.ResourceAlreadyExistsException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.validator.TagValidator;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

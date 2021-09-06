@@ -122,15 +122,6 @@ public class GiftCertificateServiceTest {
     }
 
     @Test
-    public void testShouldThrowExceptionWhenTagIsNotFoundByNameInGetByTagName() {
-        assertThrows(ResourceNotFoundException.class, () -> {
-            Mockito.when(tagService.getByName(null)).thenReturn(null);
-
-            giftCertificateService.getByTagName(null);
-        });
-    }
-
-    @Test
     public void testShouldReturnListOfGiftCertificatesInSortByFieldInGivenOrder() {
         List<GiftCertificate> expected = Arrays.asList(new GiftCertificate(), new GiftCertificate());
         Mockito.when(giftCertificateDao.sortByFieldInGivenOrder(null, false)).thenReturn(expected);

@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is a class that encapsulates the {@link GiftCertificate} business logic and also acts as a transaction boundary.

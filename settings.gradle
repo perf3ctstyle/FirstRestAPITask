@@ -1,4 +1,4 @@
-rootProject.name = 'SpringApp'
+rootProject.name = 'FirstRestAPITask'
 include 'core'
 include 'web'
 

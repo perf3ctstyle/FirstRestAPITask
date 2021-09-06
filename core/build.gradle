@@ -10,39 +10,24 @@ repositories {
 }
 
 dependencies {
-    // https://mvnrepository.com/artifact/org.springframework/spring-core
     implementation 'org.springframework:spring-core:5.3.9'
-    // https://mvnrepository.com/artifact/org.springframework/spring-webmvc
     implementation 'org.springframework:spring-webmvc:5.3.9'
-    // https://mvnrepository.com/artifact/org.springframework/spring-jdbc
     implementation 'org.springframework:spring-jdbc:5.3.9'
-    // https://mvnrepository.com/artifact/org.springframework/spring-beans
     implementation 'org.springframework:spring-beans:5.3.9'
-    // https://mvnrepository.com/artifact/org.springframework/spring-context
     implementation 'org.springframework:spring-context:5.3.9'
-    // https://mvnrepository.com/artifact/org.springframework/spring-test
     testImplementation 'org.springframework:spring-test:5.3.9'
 
-    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
     implementation 'mysql:mysql-connector-java:8.0.26'
-    // https://mvnrepository.com/artifact/com.h2database/h2
     testImplementation 'com.h2database:h2:1.4.200'
 
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.5'
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.5'
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.12.5'
 
-    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 
-
-    // https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
     compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
 
-    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
     implementation 'org.mockito:mockito-junit-jupiter:3.12.4'

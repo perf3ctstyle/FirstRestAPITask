@@ -54,7 +54,6 @@ public class GiftCertificateController {
     private static final int CERTIFICATE_NOT_FOUND_CODE = 40401;
     private static final int DAO_EXCEPTION_CODE = 50001;
 
-    @Autowired
     public GiftCertificateController(GiftCertificateService giftCertificateService, MessageSource messageSource) {
         this.giftCertificateService = giftCertificateService;
         this.messageSource = messageSource;

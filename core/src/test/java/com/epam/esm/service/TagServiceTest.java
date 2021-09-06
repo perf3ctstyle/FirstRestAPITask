@@ -84,15 +84,6 @@ public class TagServiceTest {
     }
 
     @Test
-    public void testShouldThrowExceptionWhenNameIsMissingInCreate() {
-        assertThrows(RequiredFieldsMissingException.class, () -> {
-            Tag tag = new Tag();
-
-            tagService.create(tag);
-        });
-    }
-
-    @Test
     public void testShouldThrowExceptionWhenTagWithSameNameExistsInCreate() {
         assertThrows(ResourceAlreadyExistsException.class, () -> {
             String name = "name";
