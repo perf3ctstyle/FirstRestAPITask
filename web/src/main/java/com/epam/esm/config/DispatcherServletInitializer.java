@@ -40,7 +40,7 @@ public class DispatcherServletInitializer extends AbstractAnnotationConfigDispat
         super.onStartup(aServletContext);
         registerCharacterEncodingFilter(aServletContext);
         registerHiddenFieldFilter(aServletContext);
-        aServletContext.setInitParameter(SPRING_PROFILES_ACTIVE, "prod");
+        aServletContext.setInitParameter(SPRING_PROFILES_ACTIVE, PROD_PROFILE);
     }
 
     private void registerCharacterEncodingFilter(ServletContext aContext) {

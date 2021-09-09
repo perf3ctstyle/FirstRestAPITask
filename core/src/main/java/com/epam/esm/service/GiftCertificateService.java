@@ -68,7 +68,7 @@ public class GiftCertificateService {
     public GiftCertificate getById(long id) {
         Optional<GiftCertificate> optionalGiftCertificate = giftCertificateDao.getById(id);
 
-        if (optionalGiftCertificate.isEmpty()) {
+        if (!optionalGiftCertificate.isPresent()) {
             throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
 
@@ -112,7 +112,7 @@ public class GiftCertificateService {
     public void updateById(long id, GiftCertificate giftCertificate) {
         Optional<GiftCertificate> oldGiftCertificate = giftCertificateDao.getById(id);
 
-        if (oldGiftCertificate.isEmpty()) {
+        if (!oldGiftCertificate.isPresent()) {
             throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
 
@@ -121,7 +121,7 @@ public class GiftCertificateService {
         LocalDateTime lastUpdateDate = DateTimeUtils.nowOfPattern(DATE_TIME_PATTERN);
         giftCertificate.setLastUpdateDate(lastUpdateDate);
 
-        Map<String, String> fieldNameValueForUpdate = toMap(giftCertificate);
+        Map<String, String> fieldNameValueForUpdate = toMapNotNullFields(giftCertificate);
         giftCertificateDao.update(id, fieldNameValueForUpdate);
 
         List<Tag> tags = giftCertificate.getTags();
@@ -140,7 +140,7 @@ public class GiftCertificateService {
     public void deleteById(long id) {
         Optional<GiftCertificate> optionalGiftCertificate = giftCertificateDao.getById(id);
 
-        if (optionalGiftCertificate.isEmpty()) {
+        if (!optionalGiftCertificate.isPresent()) {
             throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
 
@@ -164,7 +164,8 @@ public class GiftCertificateService {
 
     /**
      * Returns all {@link GiftCertificate} objects from a database by the name of the tag that is associated with them or
-     * throws {@link DaoException} in the case of unexpected behaviour on a Dao-level.
+     * throws {@link ResourceNotFoundException} if a tag with this name doesn't exist
+     * or {@link DaoException} in the case of unexpected behaviour on a Dao-level.
      *
      * @param tagName - the name of the tag which will be used for searching {@link GiftCertificate} objects in a database.
      * @return {@link List} of {@link GiftCertificate} objects.
@@ -181,6 +182,8 @@ public class GiftCertificateService {
             Optional<GiftCertificate> optionalGiftCertificate = giftCertificateDao.getById(certificateId);
             optionalGiftCertificate.ifPresent(giftCertificates::add);
         });
+
+        setGiftCertificateTags(giftCertificates);
 
         return giftCertificates;
     }
@@ -226,7 +229,7 @@ public class GiftCertificateService {
                 .forEach(linkedTagIdBeforeUpdate -> giftAndTagDao.delete(giftCertificateId, linkedTagIdBeforeUpdate));
     }
 
-    private Map<String, String> toMap(GiftCertificate giftCertificate) {
+    private Map<String, String> toMapNotNullFields(GiftCertificate giftCertificate) {
         Map<String, String> presentFields = new HashMap<>();
 
         String name = giftCertificate.getName();
@@ -236,12 +239,24 @@ public class GiftCertificateService {
         LocalDateTime createDate = giftCertificate.getCreateDate();
         LocalDateTime lastUpdateDate = giftCertificate.getLastUpdateDate();
 
-        presentFields.put(GiftCertificateConstants.NAME, name);
-        presentFields.put(GiftCertificateConstants.DESCRIPTION, description);
-        presentFields.put(GiftCertificateConstants.PRICE, price.toString());
-        presentFields.put(GiftCertificateConstants.DURATION, duration.toString());
-        presentFields.put(GiftCertificateConstants.CREATE_DATE, createDate.toString());
-        presentFields.put(GiftCertificateConstants.LAST_UPDATE_DATE, lastUpdateDate.toString());
+        if (name != null) {
+            presentFields.put(GiftCertificateConstants.NAME, name);
+        }
+        if (description != null) {
+            presentFields.put(GiftCertificateConstants.DESCRIPTION, description);
+        }
+        if (price != null) {
+            presentFields.put(GiftCertificateConstants.PRICE, price.toString());
+        }
+        if (duration != null) {
+            presentFields.put(GiftCertificateConstants.DURATION, duration.toString());
+        }
+        if (createDate != null) {
+            presentFields.put(GiftCertificateConstants.CREATE_DATE, createDate.toString());
+        }
+        if (lastUpdateDate != null) {
+            presentFields.put(GiftCertificateConstants.LAST_UPDATE_DATE, lastUpdateDate.toString());
+        }
 
         return presentFields;
     }

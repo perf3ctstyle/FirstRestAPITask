@@ -3,8 +3,8 @@ package com.epam.esm.controller;
 import com.epam.esm.entity.ErrorInfo;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.DaoException;
-import com.epam.esm.exception.ResourceAlreadyExistsException;
 import com.epam.esm.exception.RequiredFieldsMissingException;
+import com.epam.esm.exception.ResourceAlreadyExistsException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.TagService;
 import com.epam.esm.util.ControllerUtils;
@@ -12,14 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Locale;
@@ -33,10 +33,6 @@ import java.util.Locale;
 @RequestMapping("/tag")
 public class TagController {
 
-    public static final int BAD_TAG_RECEIVED_CODE = 40002;
-    public static final int TAG_ALREADY_EXISTS_CODE = 40902;
-    public static final int TAG_NOT_FOUND_CODE = 40402;
-    public static final int DAO_EXCEPTION_CODE = 50002;
     private final TagService tagService;
     private final MessageSource messageSource;
 
@@ -48,6 +44,12 @@ public class TagController {
     private static final String RESOURCE_ALREADY_EXISTS = "resource.exists";
     private static final String REQUIRED_FIELDS_MISSING = "field.missing";
     private static final String INTERNAL_ERROR = "error.internal";
+    private static final String ILLEGAL_ARGUMENT = "argument.illegal";
+
+    private static final int BAD_TAG_RECEIVED_CODE = 40002;
+    private static final int TAG_ALREADY_EXISTS_CODE = 40902;
+    private static final int TAG_NOT_FOUND_CODE = 40402;
+    private static final int DAO_EXCEPTION_CODE = 50002;
 
     @Autowired
     public TagController(TagService tagService, MessageSource messageSource) {
@@ -98,33 +100,45 @@ public class TagController {
     @DeleteMapping(value = "/{id}", produces = JSON)
     public ResponseEntity<?> deleteById(@PathVariable(ID) long id) {
         tagService.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorInfo> handleIllegalArgumentException(Locale locale) {
+        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(
+                messageSource.getMessage(ILLEGAL_ARGUMENT, null, locale),
+                BAD_TAG_RECEIVED_CODE,
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(RequiredFieldsMissingException.class)
     public ResponseEntity<ErrorInfo> handleRequiredFieldsMissingException(Locale locale) {
-        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(messageSource.getMessage(REQUIRED_FIELDS_MISSING, null, locale),
+        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(
+                messageSource.getMessage(REQUIRED_FIELDS_MISSING, null, locale),
                 BAD_TAG_RECEIVED_CODE,
                 HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ResourceAlreadyExistsException.class)
     public ResponseEntity<ErrorInfo> handleResourceAlreadyExistsException(Locale locale) {
-        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(messageSource.getMessage(RESOURCE_ALREADY_EXISTS, null, locale),
+        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(
+                messageSource.getMessage(RESOURCE_ALREADY_EXISTS, null, locale),
                 TAG_ALREADY_EXISTS_CODE,
                 HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorInfo> handleResourceNotFoundException(Locale locale) {
-        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(messageSource.getMessage(RESOURCE_NOT_FOUND, null, locale),
+        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(
+                messageSource.getMessage(RESOURCE_NOT_FOUND, null, locale),
                 TAG_NOT_FOUND_CODE,
                 HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(DaoException.class)
     public ResponseEntity<ErrorInfo> handleDaoException(Locale locale) {
-        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(messageSource.getMessage(INTERNAL_ERROR, null, locale),
+        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(
+                messageSource.getMessage(INTERNAL_ERROR, null, locale),
                 DAO_EXCEPTION_CODE,
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -7,20 +7,19 @@ import com.epam.esm.exception.RequiredFieldsMissingException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.util.ControllerUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Locale;
@@ -120,7 +119,7 @@ public class GiftCertificateController {
     @DeleteMapping(value = ID_PATH, produces = JSON)
     public ResponseEntity<?> deleteById(@PathVariable long id) {
         giftCertificateService.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
@@ -139,7 +138,8 @@ public class GiftCertificateController {
 
     /**
      * Returns all {@link GiftCertificate} objects from a database by the name of the tag that is associated with them or
-     * throws {@link DaoException} in the case of unexpected behaviour on a Dao-level.
+     * throws {@link ResourceNotFoundException} if a tag with this name doesn't exist
+     * or {@link DaoException} in the case of unexpected behaviour on a Dao-level.
      *
      * @param tagName - the name of the tag which will be used for searching {@link GiftCertificate} objects in a database.
      * @return {@link ResponseEntity} with a {@link HttpStatus} and a {@link List} of {@link GiftCertificate} objects or a {@link ErrorInfo} object.
@@ -166,28 +166,32 @@ public class GiftCertificateController {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorInfo> handleIllegalArgumentException(Locale locale) {
-        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(messageSource.getMessage(ILLEGAL_ARGUMENT, null, locale),
+        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(
+                messageSource.getMessage(ILLEGAL_ARGUMENT, null, locale),
                 BAD_CERTIFICATE_RECEIVED_CODE,
                 HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(RequiredFieldsMissingException.class)
     public ResponseEntity<ErrorInfo> handleRequiredFieldsMissingException(Locale locale) {
-        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(messageSource.getMessage(REQUIRED_FIELDS_MISSING, null, locale),
+        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(
+                messageSource.getMessage(REQUIRED_FIELDS_MISSING, null, locale),
                 BAD_CERTIFICATE_RECEIVED_CODE,
                 HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorInfo> handleResourceNotFoundException(Locale locale) {
-        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(messageSource.getMessage(RESOURCE_NOT_FOUND, null, locale),
+        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(
+                messageSource.getMessage(RESOURCE_NOT_FOUND, null, locale),
                 CERTIFICATE_NOT_FOUND_CODE,
                 HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(DaoException.class)
     public ResponseEntity<ErrorInfo> handleDaoException(Locale locale) {
-        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(messageSource.getMessage(INTERNAL_ERROR, null, locale),
+        return ControllerUtils.createResponseEntityWithSpecifiedErrorInfo(
+                messageSource.getMessage(INTERNAL_ERROR, null, locale),
                 DAO_EXCEPTION_CODE,
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }

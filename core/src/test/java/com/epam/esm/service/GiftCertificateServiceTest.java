@@ -11,10 +11,14 @@ import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 
 public class GiftCertificateServiceTest {
@@ -63,15 +67,54 @@ public class GiftCertificateServiceTest {
     @Test
     public void testShouldWorkCorrectlyInCreate() {
         GiftCertificate giftCertificate = new GiftCertificate();
+        giftCertificate.setName("name");
+        giftCertificate.setDescription("description");
         giftCertificate.setPrice(100);
         giftCertificate.setDuration(100L);
-        doNothing().when(giftCertificateValidator).validateForCreation(giftCertificate);
-        List<Long> tagIds = new ArrayList<>();
-        Mockito.when(tagService.createTagsIfNotCreated(null)).thenReturn(tagIds);
-        Long certificateId = 0L;
+        List<Tag> tags = List.of(new Tag("tag name"));
+        giftCertificate.setTags(tags);
+
+        long certificateId = 1L;
         Mockito.when(giftCertificateDao.create(giftCertificate)).thenReturn(certificateId);
+        doNothing().when(giftCertificateValidator).validateForCreation(giftCertificate);
+
+        Mockito.when(giftAndTagDao.getTagIdsByCertificateId(certificateId)).thenReturn(new ArrayList<>());
+        Mockito.when(tagService.createTagsIfNotCreated(tags)).thenReturn(new ArrayList<>());
+        doNothing().when(giftAndTagDao).create(anyLong(), anyLong());
+        doNothing().when(giftAndTagDao).delete(anyLong(), anyLong());
 
         giftCertificateService.create(giftCertificate);
+    }
+
+    @Test
+    public void testShouldWorkCorrectlyInUpdateById() {
+        long certificateId = 1L;
+        GiftCertificate giftCertificate = new GiftCertificate();
+        giftCertificate.setId(1L);
+        giftCertificate.setDuration(100L);
+        List<Tag> tags = List.of(new Tag("tag name"));
+        giftCertificate.setTags(tags);
+
+        Mockito.when(giftCertificateDao.getById(certificateId)).thenReturn(Optional.of(giftCertificate));
+        doNothing().when(giftCertificateValidator).validateForUpdate(giftCertificate);
+        doNothing().when(giftCertificateDao).update(anyLong(), any());
+
+        Mockito.when(giftAndTagDao.getTagIdsByCertificateId(certificateId)).thenReturn(new ArrayList<>());
+        Mockito.when(tagService.createTagsIfNotCreated(tags)).thenReturn(new ArrayList<>());
+        doNothing().when(giftAndTagDao).create(anyLong(), anyLong());
+        doNothing().when(giftAndTagDao).delete(anyLong(), anyLong());
+
+        giftCertificateService.updateById(certificateId, giftCertificate);
+    }
+
+    @Test
+    public void testShouldThrowExceptionWhenResourceForUpdateIsNotFoundById() {
+        assertThrows(ResourceNotFoundException.class, () -> {
+            long id = 0;
+            Mockito.when(giftCertificateDao.getById(id)).thenReturn(Optional.empty());
+
+            giftCertificateService.getById(id);
+        });
     }
 
     @Test

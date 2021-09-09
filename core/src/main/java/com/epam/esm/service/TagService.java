@@ -51,7 +51,7 @@ public class TagService {
     public Tag getById(long id) {
         Optional<Tag> optionalTag = tagDao.getById(id);
 
-        if (optionalTag.isEmpty()) {
+        if (!optionalTag.isPresent()) {
             throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
 
@@ -68,7 +68,7 @@ public class TagService {
     public Tag getByName(String name) {
         Optional<Tag> optionalTag = tagDao.getByName(name);
 
-        if (optionalTag.isEmpty()) {
+        if (!optionalTag.isPresent()) {
             throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
 
@@ -109,7 +109,7 @@ public class TagService {
             String tagName = tag.getName();
             Optional<Tag> optionalTag = tagDao.getByName(tagName);
 
-            if (optionalTag.isEmpty()) {
+            if (!optionalTag.isPresent()) {
                 Tag tagToCreate = new Tag(null, tagName);
 
                 Long id = tagDao.create(tagToCreate);
@@ -152,7 +152,7 @@ public class TagService {
     public void deleteById(long id) {
         Optional<Tag> optionalTag = tagDao.getById(id);
 
-        if (optionalTag.isEmpty()) {
+        if (!optionalTag.isPresent()) {
             throw new ResourceNotFoundException(RESOURCE_NOT_FOUND);
         }
 
